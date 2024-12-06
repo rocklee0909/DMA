@@ -1,0 +1,3 @@
+cn.monitoring.system.api.factory.RemoteUserFallbackFactory
+cn.monitoring.system.api.factory.RemoteLogFallbackFactory
+cn.monitoring.system.api.factory.RemoteFileFallbackFactory

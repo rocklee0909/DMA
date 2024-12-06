@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>cn.monitoring</groupId>
+        <artifactId>dma</artifactId>
+        <version>3.6.5</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <modules>
+        <module>dma-common-log</module>
+        <module>dma-common-core</module>
+        <module>dma-common-redis</module>
+        <module>dma-common-seata</module>
+        <module>dma-common-swagger</module>
+        <module>dma-common-security</module>
+        <module>dma-common-sensitive</module>
+        <module>dma-common-datascope</module>
+        <module>dma-common-datasource</module>
+    </modules>
+
+    <artifactId>dma-common</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        dma-common通用模块
+    </description>
+
+</project>
