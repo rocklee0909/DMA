@@ -33,7 +33,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/y_project/Dma-Cloud.git"
+    "url": "https://gitee.com/arthur_lee/dma.git"
   },
   "dependencies": {
     "@riophae/vue-treeselect": "0.4.0",
