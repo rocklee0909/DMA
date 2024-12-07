@@ -15,6 +15,6 @@ public class DmaGatewayApplication
     public static void main(String[] args)
     {
         SpringApplication.run(DmaGatewayApplication.class, args);
-        System.out.println("DMA  若依网关启动成功");
+        System.out.println("DMA  网关启动成功");
     }
 }
