@@ -6,6 +6,10 @@ import java.util.List;
 import cn.monitoring.common.core.utils.DateUtils;
 #break
 #end
+#if($column.javaField == 'createBy' || $column.javaField == 'updateBy')
+import cn.monitoring.common.security.utils.SecurityUtils;
+#break
+#end
 #end
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,6 +72,9 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
     public int insert${ClassName}(${ClassName} ${className})
     {
 #foreach ($column in $columns)
+#if($column.javaField == 'createBy')
+        ${className}.setCreateBy(SecurityUtils.getUsername());
+#end
 #if($column.javaField == 'createTime')
         ${className}.setCreateTime(DateUtils.getNowDate());
 #end
@@ -94,6 +101,9 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
     public int update${ClassName}(${ClassName} ${className})
     {
 #foreach ($column in $columns)
+#if($column.javaField == 'updateTime')
+        ${className}.setUpdateBy(SecurityUtils.getUsername());
+#end
 #if($column.javaField == 'updateTime')
         ${className}.setUpdateTime(DateUtils.getNowDate());
 #end

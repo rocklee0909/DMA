@@ -266,6 +266,7 @@ public class GenTableServiceImpl implements IGenTableService
                 try
                 {
                     String path = getGenPath(table, template);
+                    if (validateFileExits(path)) continue;
                     FileUtils.writeStringToFile(new File(path), sw.toString(), CharsetKit.UTF_8);
                 }
                 catch (IOException e)
@@ -274,6 +275,39 @@ public class GenTableServiceImpl implements IGenTableService
                 }
             }
         }
+
+        for (String template : templates)
+        {
+            if (StringUtils.containsAny(template, "api.js.vm", "index.vue.vm", "index-tree.vue.vm"))
+            {
+                // 渲染模板
+                StringWriter sw = new StringWriter();
+                Template tpl = Velocity.getTemplate(template, Constants.UTF8);
+                tpl.merge(context, sw);
+                try
+                {
+                    String path = getGenPagePath(table, template);
+                    //判断文件是否存在，存在后跳过写入
+                    if (validateFileExits(path)) continue;
+
+                    FileUtils.writeStringToFile(new File(path), sw.toString(), CharsetKit.UTF_8);
+                }
+                catch (IOException e)
+                {
+                    throw new ServiceException("渲染模板失败，表名：" + table.getTableName());
+                }
+            }
+        }
+    }
+
+    private static boolean validateFileExits(String path) {
+        //判断文件是否存在，存在后跳过写入
+        File file = new File(path);
+        if (file.exists()) {
+            log.info("文件已存在，跳过写入: {}", path);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -515,6 +549,23 @@ public class GenTableServiceImpl implements IGenTableService
         if (StringUtils.equals(genPath, "/"))
         {
             return System.getProperty("user.dir") + File.separator + "src" + File.separator + VelocityUtils.getFileName(template, table);
+        }
+        return genPath + File.separator + VelocityUtils.getFileName(template, table);
+    }
+
+    /**
+     * 获取代码生成地址
+     *
+     * @param table 业务表信息
+     * @param template 模板文件路径
+     * @return 生成地址
+     */
+    public static String getGenPagePath(GenTable table, String template)
+    {
+        String genPath = table.getGenPagePath();
+        if (StringUtils.equals(genPath, "/") || StringUtils.equals(genPath, "/dma-ui"))
+        {
+            return System.getProperty("user.dir") + genPath + File.separator + "src" + File.separator + VelocityUtils.getFileName(template, table);
         }
         return genPath + File.separator + VelocityUtils.getFileName(template, table);
     }

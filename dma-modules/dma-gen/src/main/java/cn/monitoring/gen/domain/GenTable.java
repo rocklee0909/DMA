@@ -70,6 +70,9 @@ public class GenTable extends BaseEntity
     /** 生成路径（不填默认项目路径） */
     private String genPath;
 
+    /** 生成页面路径（不填默认项目/dma-ui路径） */
+    private String genPagePath;
+
     /** 主键信息 */
     private GenTableColumn pkColumn;
 
@@ -246,6 +249,14 @@ public class GenTable extends BaseEntity
     public void setGenPath(String genPath)
     {
         this.genPath = genPath;
+    }
+
+    public String getGenPagePath(){
+        return genPagePath;
+    }
+
+    public void setGenPagePath(String genPagePath){
+        this.genPagePath = genPagePath;
     }
 
     public GenTableColumn getPkColumn()

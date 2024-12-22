@@ -108,6 +108,18 @@ public class GenTableColumn extends BaseEntity
         return columnComment;
     }
 
+    public String getShortColumnComment(){
+        String shortColumnComment = null;
+        if(StringUtils.isNotEmpty(columnComment)){
+            if(columnComment.contains("：")){
+                shortColumnComment = StringUtils.substring(columnComment,0,"：");
+            }else if(columnComment.contains(":")){
+                shortColumnComment = StringUtils.substring(columnComment,0,":");
+            }
+        }
+        return shortColumnComment;
+    }
+
     public void setColumnType(String columnType)
     {
         this.columnType = columnType;

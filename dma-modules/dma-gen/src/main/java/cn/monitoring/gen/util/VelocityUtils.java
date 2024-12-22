@@ -46,6 +46,18 @@ public class VelocityUtils
         velocityContext.put("tplCategory", genTable.getTplCategory());
         velocityContext.put("tableName", genTable.getTableName());
         velocityContext.put("functionName", StringUtils.isNotEmpty(functionName) ? functionName : "【请填写功能名称】");
+
+        String functionShortName = "【请填写功能名称】";
+
+        if(StringUtils.isNotEmpty(functionName)){
+            if(functionName.contains("：")){
+                functionShortName = StringUtils.substring(functionName,0,"：");
+            }else if(functionName.contains(":")){
+                functionShortName = StringUtils.substring(functionName,0,":");
+            }
+        }
+
+        velocityContext.put("functionShortName", functionShortName);
         velocityContext.put("ClassName", genTable.getClassName());
         velocityContext.put("className", StringUtils.uncapitalize(genTable.getClassName()));
         velocityContext.put("moduleName", genTable.getModuleName());
@@ -178,6 +190,9 @@ public class VelocityUtils
         String javaPath = PROJECT_PATH + "/" + StringUtils.replace(packageName, ".", "/");
         String mybatisPath = MYBATIS_PATH + "/" + moduleName;
         String vuePath = "vue";
+        if(StringUtils.isNotBlank(genTable.getGenType()) && genTable.getGenType().equals("1")){
+            vuePath = ".";
+        }
 
         if (template.contains("domain.java.vm"))
         {

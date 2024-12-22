@@ -695,3 +695,77 @@ create table gen_table_column (
   update_time       datetime                                   comment '更新时间',
   primary key (column_id)
 ) engine=innodb auto_increment=1 comment = '代码生成业务表字段';
+
+
+
+
+-- ---------------------------业务添加LIRU------------------------------------
+
+-- 创建采集器基本信息表（collector_info）
+CREATE TABLE collector_info (
+                                collector_id INT AUTO_INCREMENT PRIMARY KEY,
+                                collector_name VARCHAR(100) NOT NULL COMMENT '采集器名称，方便识别和管理',
+                                collector_type VARCHAR(50) NOT NULL COMMENT '采集器类型，例如网络采集器、传感器采集器等',
+                                description TEXT COMMENT '对采集器的详细描述，包括功能、适用场景等',
+                                create_time DATETIME NOT NULL COMMENT '采集器创建时间',
+                                update_time DATETIME NOT NULL COMMENT '采集器更新时间，每次修改记录更新该字段'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '采集器基本信息表：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等';
+
+-- 创建采集器配置表（collector_config）
+CREATE TABLE collector_config (
+                                  config_id INT AUTO_INCREMENT PRIMARY KEY,
+                                  collector_id INT NOT NULL COMMENT '关联的采集器 ID，指向 collector_info 表',
+                                  config_key VARCHAR(100) NOT NULL COMMENT '配置项的键，用于唯一标识不同的配置参数，如采样频率、数据格式等',
+                                  config_value TEXT NOT NULL COMMENT '配置项的值，对应具体的配置内容，如每5分钟一次',
+                                  create_time DATETIME NOT NULL COMMENT '配置项创建时间',
+                                  update_time DATETIME NOT NULL COMMENT '配置项更新时间，每次修改记录更新该字段',
+                                  FOREIGN KEY (collector_id) REFERENCES collector_info(collector_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '采集器配置表：记录生产数据采集器的各项配置信息，通过外键关联到采集器基本信息表';
+
+-- 创建数据源信息表（data_source）
+CREATE TABLE data_source (
+                             source_id INT AUTO_INCREMENT PRIMARY KEY,
+                             collector_id INT NOT NULL COMMENT '关联的采集器 ID，表明该数据源供哪个采集器采集数据',
+                             source_type VARCHAR(50) NOT NULL COMMENT '数据源类型，比如 MySQL、Oracle、Kafka、传感器接口等',
+                             source_url VARCHAR(200) NOT NULL COMMENT '数据源的连接地址，如数据库的连接字符串、接口的URL等',
+                             source_username VARCHAR(100) COMMENT '连接数据源所需的用户名',
+                             source_password VARCHAR(100) COMMENT '连接数据源所需的密码',
+                             create_time DATETIME NOT NULL COMMENT '数据源记录创建时间',
+                             update_time DATETIME NOT NULL COMMENT '数据源记录更新时间，每次修改记录更新该字段',
+                             FOREIGN KEY (collector_id) REFERENCES collector_info(collector_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '数据源信息表：存储生产数据采集所涉及的数据源相关信息，包括数据源类型、连接地址、登录凭据等，并与采集器基本信息表关联，表明各采集器对应的数据源';
+
+-- 创建采集任务表（collect_task）
+CREATE TABLE collect_task (
+                              task_id INT AUTO_INCREMENT PRIMARY KEY,
+                              collector_id INT NOT NULL COMMENT '关联的采集器 ID，指定由哪个采集器执行任务',
+                              task_name VARCHAR(100) NOT NULL COMMENT '采集任务名称，便于识别任务内容，如生产设备状态数据采集任务',
+                              task_desc TEXT COMMENT '采集任务的详细描述，包括采集的数据范围、目的等',
+                              task_status VARCHAR(20) NOT NULL COMMENT '任务当前状态，如未开始、进行中、已完成、暂停等',
+                              scheduled_time DATETIME NOT NULL COMMENT '任务计划开始时间',
+                              run_period INT NOT NULL COMMENT '任务执行间隔，单位可以是分钟、小时等，用于周期性任务，若为一次性任务可设为0',
+                              create_time DATETIME NOT NULL COMMENT '采集任务创建时间',
+                              update_time DATETIME NOT NULL COMMENT '采集任务更新时间，每次修改记录更新该字段',
+                              FOREIGN KEY (collector_id) REFERENCES collector_info(collector_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '采集任务表：用于管理生产数据采集任务，记录任务的基本信息，如任务名称、状态、计划时间、执行间隔等，通过外键关联到采集器基本信息表，表明由哪个采集器执行任务';
+
+-- 创建采集任务日志表（collect_task_log）
+CREATE TABLE collect_task_log (
+                                  log_id INT AUTO_INCREMENT PRIMARY KEY,
+                                  task_id INT NOT NULL COMMENT '关联的采集任务 ID，指向 collect_task 表',
+                                  log_time DATETIME NOT NULL COMMENT '日志记录时间，即事件发生时间',
+                                  log_level VARCHAR(20) NOT NULL COMMENT '日志级别，如 INFO、WARN、ERROR 等',
+                                  log_message TEXT NOT NULL COMMENT '日志详细内容，描述任务执行过程中的相关事件，如任务开始执行、采集到XX条数据、出现XX错误等',
+                                  FOREIGN KEY (task_id) REFERENCES collect_task(task_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '采集任务日志表：记录生产数据采集任务执行过程中的详细日志信息，通过外键关联到采集任务表，方便追踪每个任务的执行情况，如开始、结束、出现的问题等';
+
+-- 创建采集监控表（collect_monitor）
+CREATE TABLE collect_monitor (
+                                 monitor_id INT AUTO_INCREMENT PRIMARY KEY,
+                                 collector_id INT NOT NULL COMMENT '关联的采集器 ID，针对哪个采集器进行监控',
+                                 monitor_time DATETIME NOT NULL COMMENT '监控时间点',
+                                 data_size BIGINT NOT NULL COMMENT '本次监控时采集到的数据量大小，单位可以根据实际情况定，如字节、条等',
+                                 success_rate DECIMAL(5, 2) NOT NULL COMMENT '采集成功率，取值范围0 - 100，表示本次采集成功的数据占比',
+                                 error_message TEXT COMMENT '若采集过程出现错误，记录错误详细信息，无错误则可为空',
+                                 FOREIGN KEY (collector_id) REFERENCES collector_info(collector_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '采集监控表：用于对生产数据采集过程进行监控，记录每次监控时的相关指标数据，如采集到的数据量大小、采集成功率以及出现的错误信息等，通过外键关联到采集器基本信息表，针对每个采集器进行监控记录';

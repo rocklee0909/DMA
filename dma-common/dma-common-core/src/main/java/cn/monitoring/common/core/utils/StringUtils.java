@@ -237,6 +237,45 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
         return str.substring(start);
     }
 
+
+    /**
+     * 截取字符串
+     *
+     * @param str 字符串
+     * @param start 开始
+     * @param endStr 结束字符串
+     * @return 结果
+     */
+    public static String substring(final String str, int start, String endStr)
+    {
+        if (str == null)
+        {
+            return NULLSTR;
+        }
+
+        if (start < 0)
+        {
+            start = str.length() + start;
+        }
+
+        if (start < 0)
+        {
+            start = 0;
+        }
+        if (start > str.length())
+        {
+            return NULLSTR;
+        }
+
+        int end = str.indexOf(endStr, start);
+        if (end == -1)
+        {
+            return NULLSTR;
+        }
+
+        return str.substring(start, end);
+    }
+
     /**
      * 截取字符串
      * 

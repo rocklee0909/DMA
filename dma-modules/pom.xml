@@ -13,6 +13,7 @@
         <module>dma-gen</module>
         <module>dma-job</module>
         <module>dma-file</module>
+        <module>dma-collection</module>
     </modules>
 
     <artifactId>dma-modules</artifactId>

@@ -121,6 +121,28 @@
           </el-input>
         </el-form-item>
       </el-col>
+
+      <el-col :span="24" v-if="info.genType == '1'">
+        <el-form-item prop="genPagePath">
+          <span slot="label">
+            自定义页面路径
+            <el-tooltip content="填写磁盘绝对路径，若不填写，则生成到当前Web项目下" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+          </span>
+          <el-input v-model="info.genPagePath">
+            <el-dropdown slot="append">
+              <el-button type="primary">
+                最近路径快速选择
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="info.genPagePath = '/dma-ui'">恢复默认的生成基础路径</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-input>
+        </el-form-item>
+      </el-col>
     </el-row>
 
     <el-row v-show="info.tplCategory == 'tree'">

@@ -39,6 +39,9 @@
         <tomcat.version>9.0.96</tomcat.version>
         <logback.version>1.2.13</logback.version>
         <spring-framework.version>5.3.39</spring-framework.version>
+
+        <hutool.version>5.6.5</hutool.version>
+        <clickhouse.version>0.3.2</clickhouse.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -251,6 +254,18 @@
                 <groupId>cn.monitoring</groupId>
                 <artifactId>dma-api-system</artifactId>
                 <version>${dma.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ru.yandex.clickhouse</groupId>
+                <artifactId>clickhouse-jdbc</artifactId>
+                <version>${clickhouse.version}</version>
             </dependency>
 
         </dependencies>

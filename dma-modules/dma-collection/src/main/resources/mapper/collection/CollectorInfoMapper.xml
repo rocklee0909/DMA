@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.monitoring.collection.mapper.CollectorInfoMapper">
+
+    <resultMap type="CollectorInfo" id="CollectorInfoResult">
+        <result property="collectorId"    column="collector_id"    />
+        <result property="collectorName"    column="collector_name"    />
+        <result property="collectorType"    column="collector_type"    />
+        <result property="description"    column="description"    />
+        <result property="moduleName"    column="module_name"    />
+        <result property="dmaGroup"    column="dma_group"    />
+        <result property="dmaTopic"    column="dma_topic"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCollectorInfoVo">
+        select collector_id, collector_name, collector_type, description, module_name, dma_group, dma_topic, create_by, create_time, update_by, update_time from collector_info
+    </sql>
+
+    <select id="selectCollectorInfoList" parameterType="CollectorInfo" resultMap="CollectorInfoResult">
+        <include refid="selectCollectorInfoVo"/>
+        <where>
+            <if test="collectorName != null  and collectorName != ''"> and collector_name like concat('%', #{collectorName}, '%')</if>
+            <if test="collectorType != null  and collectorType != ''"> and collector_type = #{collectorType}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="moduleName != null  and moduleName != ''"> and module_name like concat('%', #{moduleName}, '%')</if>
+            <if test="dmaGroup != null  and dmaGroup != ''"> and dma_group = #{dmaGroup}</if>
+            <if test="dmaTopic != null  and dmaTopic != ''"> and dma_topic = #{dmaTopic}</if>
+        </where>
+    </select>
+
+    <select id="selectCollectorInfoByCollectorId" parameterType="Long" resultMap="CollectorInfoResult">
+        <include refid="selectCollectorInfoVo"/>
+        where collector_id = #{collectorId}
+    </select>
+
+    <insert id="insertCollectorInfo" parameterType="CollectorInfo" useGeneratedKeys="true" keyProperty="collectorId">
+        insert into collector_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="collectorName != null and collectorName != ''">collector_name,</if>
+            <if test="collectorType != null and collectorType != ''">collector_type,</if>
+            <if test="description != null">description,</if>
+            <if test="moduleName != null">module_name,</if>
+            <if test="dmaGroup != null">dma_group,</if>
+            <if test="dmaTopic != null">dma_topic,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="collectorName != null and collectorName != ''">#{collectorName},</if>
+            <if test="collectorType != null and collectorType != ''">#{collectorType},</if>
+            <if test="description != null">#{description},</if>
+            <if test="moduleName != null">#{moduleName},</if>
+            <if test="dmaGroup != null">#{dmaGroup},</if>
+            <if test="dmaTopic != null">#{dmaTopic},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCollectorInfo" parameterType="CollectorInfo">
+        update collector_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="collectorName != null and collectorName != ''">collector_name = #{collectorName},</if>
+            <if test="collectorType != null and collectorType != ''">collector_type = #{collectorType},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="moduleName != null">module_name = #{moduleName},</if>
+            <if test="dmaGroup != null">dma_group = #{dmaGroup},</if>
+            <if test="dmaTopic != null">dma_topic = #{dmaTopic},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where collector_id = #{collectorId}
+    </update>
+
+    <delete id="deleteCollectorInfoByCollectorId" parameterType="Long">
+        delete from collector_info where collector_id = #{collectorId}
+    </delete>
+
+    <delete id="deleteCollectorInfoByCollectorIds" parameterType="String">
+        delete from collector_info where collector_id in
+        <foreach item="collectorId" collection="array" open="(" separator="," close=")">
+            #{collectorId}
+        </foreach>
+    </delete>
+
+    <!-- 自定义代码 -->
+    <select id="selectCollectorInfoByDmaTopic" parameterType="String" resultMap="CollectorInfoResult">
+        <include refid="selectCollectorInfoVo"/>
+        where dma_topic = #{dmaTopic}
+    </select>
+</mapper>

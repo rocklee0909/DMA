@@ -18,6 +18,8 @@
         <module>dma-common-sensitive</module>
         <module>dma-common-datascope</module>
         <module>dma-common-datasource</module>
+        <module>dma-common-kafka</module>
+        <module>dma-common-flink</module>
     </modules>
 
     <artifactId>dma-common</artifactId>
