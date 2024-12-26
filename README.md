@@ -40,3 +40,12 @@ nohup ./bin/zookeeper-server-start.sh config/zookeeper.properties &
 启动 kafka
 启动命令：
 nohup ./bin/kafka-server-start.sh -daemon config/server.properties
+
+
+``服务端口使用情况``
+DmaGenApplication: 9202
+DmaMonitorApplication: 9100
+DmaAuthApplication: 9200
+DmaCollectionApplication: 9209
+DmaGatewayApplication: 8080
+DmaSystemApplication: 9201

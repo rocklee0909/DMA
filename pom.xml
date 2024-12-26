@@ -42,6 +42,8 @@
 
         <hutool.version>5.6.5</hutool.version>
         <clickhouse.version>0.3.2</clickhouse.version>
+
+        <oshi.version>6.6.5</oshi.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -266,6 +268,13 @@
                 <groupId>ru.yandex.clickhouse</groupId>
                 <artifactId>clickhouse-jdbc</artifactId>
                 <version>${clickhouse.version}</version>
+            </dependency>
+
+            <!-- 获取系统信息 -->
+            <dependency>
+                <groupId>com.github.oshi</groupId>
+                <artifactId>oshi-core</artifactId>
+                <version>${oshi.version}</version>
             </dependency>
 
         </dependencies>

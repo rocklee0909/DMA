@@ -3,11 +3,13 @@ package cn.monitoring.collection.service.impl;
 import java.util.Collections;
 import java.util.List;
 
+import cn.monitoring.collection.jobs.CollectorInfoDataReceiveJob;
 import cn.monitoring.collection.jobs.DmaKafkaCollectorDataJob;
 import cn.monitoring.collection.mapper.CollectorInfoMapper;
 import cn.monitoring.common.core.utils.DateUtils;
 import cn.monitoring.common.core.utils.SpringUtils;
-import cn.monitoring.common.flink.job.FlinkJobManager;
+import cn.monitoring.common.kafka.consumer.IManualBindConsumer;
+import cn.monitoring.common.kafka.utils.KafkaUtil;
 import cn.monitoring.common.security.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,7 @@ public class CollectorInfoServiceImpl implements ICollectorInfoService
     private CollectorInfoMapper collectorInfoMapper;
 
     @Autowired
-    private FlinkJobManager flinkJobManager;
+    private KafkaUtil kafkaUtil;
 
     /**
      * 查询采集器基本信息：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等
@@ -67,8 +69,12 @@ public class CollectorInfoServiceImpl implements ICollectorInfoService
         collectorInfo.setCreateBy(SecurityUtils.getUsername());
         collectorInfo.setCreateTime(DateUtils.getNowDate());
         int count = collectorInfoMapper.insertCollectorInfo(collectorInfo);
-        if(count>0){
-            addJob(collectorInfo);
+
+        try {
+            IManualBindConsumer consumer = SpringUtils.getBean(CollectorInfoDataReceiveJob.class);
+            kafkaUtil.manualBindConsumer(collectorInfo.getDmaTopic(), collectorInfo.getDmaGroup(), consumer);
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage(),e);
         }
         return count;
     }
@@ -86,8 +92,11 @@ public class CollectorInfoServiceImpl implements ICollectorInfoService
         collectorInfo.setUpdateTime(DateUtils.getNowDate());
 
         int count = collectorInfoMapper.updateCollectorInfo(collectorInfo);
-        if(count>0){
-            addJob(collectorInfo);
+        try {
+            IManualBindConsumer consumer = SpringUtils.getBean(CollectorInfoDataReceiveJob.class);
+            kafkaUtil.manualBindConsumer(collectorInfo.getDmaTopic(), collectorInfo.getDmaGroup(), consumer);
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage(),e);
         }
         return count;
     }
@@ -101,6 +110,14 @@ public class CollectorInfoServiceImpl implements ICollectorInfoService
     @Override
     public int deleteCollectorInfoByCollectorIds(Long[] collectorIds)
     {
+        for (Long collectorId : collectorIds) {
+            CollectorInfo collectorInfo = collectorInfoMapper.selectCollectorInfoByCollectorId(collectorId);
+            try {
+                kafkaUtil.deleteTopic(collectorInfo.getDmaTopic());
+            } catch (Exception e) {
+                log.error("删除主题失败");
+            }
+        }
         return collectorInfoMapper.deleteCollectorInfoByCollectorIds(collectorIds);
     }
 
@@ -113,24 +130,31 @@ public class CollectorInfoServiceImpl implements ICollectorInfoService
     @Override
     public int deleteCollectorInfoByCollectorId(Long collectorId)
     {
+        CollectorInfo collectorInfo = collectorInfoMapper.selectCollectorInfoByCollectorId(collectorId);
+        try {
+            kafkaUtil.deleteTopic(collectorInfo.getDmaTopic());
+        } catch (Exception e) {
+            log.error("删除主题失败");
+        }
+
         return collectorInfoMapper.deleteCollectorInfoByCollectorId(collectorId);
     }
 
-    @Override
-    public void addJob(CollectorInfo collectorInfo){
-        Thread thread = new Thread(() -> {
-            try {
-                DmaKafkaCollectorDataJob job = SpringUtils.getBean(DmaKafkaCollectorDataJob.class);
-                job.setJobName(collectorInfo.getCollectorName() + " 采集器数据采集");
-                job.setGroupId(collectorInfo.getDmaGroup());
-                job.setTopic(collectorInfo.getDmaTopic());
-                flinkJobManager.executeJob(job);
-            } catch (Exception e) {
-                log.error("Error executing Flink job", e);
-            }
-        });
-        thread.start();
-    }
+//    @Override
+//    public void addJob(CollectorInfo collectorInfo){
+//        Thread thread = new Thread(() -> {
+//            try {
+//                DmaKafkaCollectorDataJob job = SpringUtils.getBean(DmaKafkaCollectorDataJob.class);
+//                job.setJobName(collectorInfo.getCollectorName() + " 采集器数据采集");
+//                job.setGroupId(collectorInfo.getDmaGroup());
+//                job.setTopic(collectorInfo.getDmaTopic());
+//                flinkJobManager.executeJob(job);
+//            } catch (Exception e) {
+//                log.error("Error executing Flink job", e);
+//            }
+//        });
+//        thread.start();
+//    }
 
     @Override
     public List<CollectorInfo> selectCollectorInfoByDmaTopic(String topic) {

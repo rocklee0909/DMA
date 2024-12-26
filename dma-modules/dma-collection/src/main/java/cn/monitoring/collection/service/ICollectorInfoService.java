@@ -59,11 +59,11 @@ public interface ICollectorInfoService
      */
     public int deleteCollectorInfoByCollectorId(Long collectorId);
 
-    /**
-     * 添加数据处理任务
-     * @param collectorInfo
-     */
-    void addJob(CollectorInfo collectorInfo);
+//    /**
+//     * 添加数据处理任务
+//     * @param collectorInfo
+//     */
+//    void addJob(CollectorInfo collectorInfo);
 
     /**
      * 根据主题查询采集器信息
