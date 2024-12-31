@@ -16,10 +16,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="limitDataNum"    column="limit_data_num"    />
+        <result property="validDataNum"    column="valid_data_num"    />
     </resultMap>
 
     <sql id="selectCollectorInfoVo">
-        select collector_id, collector_name, collector_type, description, module_name, dma_group, dma_topic, create_by, create_time, update_by, update_time from collector_info
+        select collector_id, collector_name, collector_type, description, module_name, dma_group, dma_topic, create_by, create_time, update_by, update_time, limit_data_num, valid_data_num from collector_info
     </sql>
 
     <select id="selectCollectorInfoList" parameterType="CollectorInfo" resultMap="CollectorInfoResult">
@@ -28,9 +30,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="collectorName != null  and collectorName != ''"> and collector_name like concat('%', #{collectorName}, '%')</if>
             <if test="collectorType != null  and collectorType != ''"> and collector_type = #{collectorType}</if>
             <if test="description != null  and description != ''"> and description = #{description}</if>
-            <if test="moduleName != null  and moduleName != ''"> and module_name like concat('%', #{moduleName}, '%')</if>
+            <if test="moduleName != null  and moduleName != ''"> and module_name = #{moduleName}</if>
             <if test="dmaGroup != null  and dmaGroup != ''"> and dma_group = #{dmaGroup}</if>
             <if test="dmaTopic != null  and dmaTopic != ''"> and dma_topic = #{dmaTopic}</if>
+            <if test="limitDataNum != null "> and limit_data_num = #{limitDataNum}</if>
+            <if test="validDataNum != null "> and valid_data_num = #{validDataNum}</if>
         </where>
     </select>
 
@@ -52,6 +56,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
+<!--            <if test="limitDataNum != null">limit_data_num,</if>-->
+<!--            <if test="validDataNum != null">valid_data_num,</if>-->
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="collectorName != null and collectorName != ''">#{collectorName},</if>
@@ -64,6 +70,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
+<!--            <if test="limitDataNum != null">#{limitDataNum},</if>-->
+<!--            <if test="validDataNum != null">#{validDataNum},</if>-->
         </trim>
     </insert>
 
@@ -80,6 +88,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+<!--            <if test="limitDataNum != null">limit_data_num = #{limitDataNum},</if>-->
+<!--            <if test="validDataNum != null">valid_data_num = #{validDataNum},</if>-->
         </trim>
         where collector_id = #{collectorId}
     </update>

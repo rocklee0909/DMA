@@ -2,6 +2,7 @@ package cn.monitoring.collection.service;
 
 import java.util.List;
 import cn.monitoring.collection.domain.CollectorInfo;
+import cn.monitoring.collection.domain.vo.TreeSelect;
 
 /**
  * 采集器基本信息：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等Service接口
@@ -71,4 +72,11 @@ public interface ICollectorInfoService
      * @return
      */
     List<CollectorInfo> selectCollectorInfoByDmaTopic(String topic);
+
+    /**
+     * 查询采集器树结构
+     * @param collectorInfo
+     * @return
+     */
+    List<TreeSelect> selectCollectorTreeList(CollectorInfo collectorInfo);
 }

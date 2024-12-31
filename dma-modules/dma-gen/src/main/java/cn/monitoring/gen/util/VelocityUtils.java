@@ -54,6 +54,8 @@ public class VelocityUtils
                 functionShortName = StringUtils.substring(functionName,0,"：");
             }else if(functionName.contains(":")){
                 functionShortName = StringUtils.substring(functionName,0,":");
+            }else{
+                functionShortName = functionName;
             }
         }
 

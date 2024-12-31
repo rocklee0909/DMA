@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.monitoring.process.mapper.ProcessRecipeMapper">
+    
+    <resultMap type="ProcessRecipe" id="ProcessRecipeResult">
+        <result property="recipeId"    column="recipe_id"    />
+        <result property="equipmentInfoId"    column="equipment_info_id"    />
+        <result property="productCode"    column="product_code"    />
+        <result property="recipeCode"    column="recipe_code"    />
+        <result property="recipeName"    column="recipe_name"    />
+        <result property="equipmentType"    column="equipment_type"    />
+        <result property="recipeStatus"    column="recipe_status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectProcessRecipeVo">
+        select recipe_id, equipment_info_id, product_code, recipe_code, recipe_name, equipment_type, recipe_status, remark, create_by, create_time, update_by, update_time from process_recipe
+    </sql>
+
+    <select id="selectProcessRecipeList" parameterType="ProcessRecipe" resultMap="ProcessRecipeResult">
+        <include refid="selectProcessRecipeVo"/>
+        <where>  
+            <if test="equipmentInfoId != null "> and equipment_info_id = #{equipmentInfoId}</if>
+            <if test="productCode != null  and productCode != ''"> and product_code = #{productCode}</if>
+            <if test="recipeCode != null  and recipeCode != ''"> and recipe_code = #{recipeCode}</if>
+            <if test="recipeName != null  and recipeName != ''"> and recipe_name like concat('%', #{recipeName}, '%')</if>
+            <if test="equipmentType != null  and equipmentType != ''"> and equipment_type = #{equipmentType}</if>
+            <if test="recipeStatus != null  and recipeStatus != ''"> and recipe_status = #{recipeStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectProcessRecipeByRecipeId" parameterType="Long" resultMap="ProcessRecipeResult">
+        <include refid="selectProcessRecipeVo"/>
+        where recipe_id = #{recipeId}
+    </select>
+
+    <insert id="insertProcessRecipe" parameterType="ProcessRecipe" useGeneratedKeys="true" keyProperty="recipeId">
+        insert into process_recipe
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="equipmentInfoId != null">equipment_info_id,</if>
+            <if test="productCode != null">product_code,</if>
+            <if test="recipeCode != null and recipeCode != ''">recipe_code,</if>
+            <if test="recipeName != null">recipe_name,</if>
+            <if test="equipmentType != null">equipment_type,</if>
+            <if test="recipeStatus != null and recipeStatus != ''">recipe_status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="equipmentInfoId != null">#{equipmentInfoId},</if>
+            <if test="productCode != null">#{productCode},</if>
+            <if test="recipeCode != null and recipeCode != ''">#{recipeCode},</if>
+            <if test="recipeName != null">#{recipeName},</if>
+            <if test="equipmentType != null">#{equipmentType},</if>
+            <if test="recipeStatus != null and recipeStatus != ''">#{recipeStatus},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProcessRecipe" parameterType="ProcessRecipe">
+        update process_recipe
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="equipmentInfoId != null">equipment_info_id = #{equipmentInfoId},</if>
+            <if test="productCode != null">product_code = #{productCode},</if>
+            <if test="recipeCode != null and recipeCode != ''">recipe_code = #{recipeCode},</if>
+            <if test="recipeName != null">recipe_name = #{recipeName},</if>
+            <if test="equipmentType != null">equipment_type = #{equipmentType},</if>
+            <if test="recipeStatus != null and recipeStatus != ''">recipe_status = #{recipeStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where recipe_id = #{recipeId}
+    </update>
+
+    <delete id="deleteProcessRecipeByRecipeId" parameterType="Long">
+        delete from process_recipe where recipe_id = #{recipeId}
+    </delete>
+
+    <delete id="deleteProcessRecipeByRecipeIds" parameterType="String">
+        delete from process_recipe where recipe_id in 
+        <foreach item="recipeId" collection="array" open="(" separator="," close=")">
+            #{recipeId}
+        </foreach>
+    </delete>
+</mapper>

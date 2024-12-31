@@ -1,9 +1,11 @@
 package cn.monitoring.collection.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import cn.monitoring.common.core.annotation.Excel;
 import cn.monitoring.common.core.web.domain.BaseEntity;
+import lombok.NoArgsConstructor;
 
 /**
  * 数据点位配置对象 data_point
@@ -12,11 +14,21 @@ import cn.monitoring.common.core.web.domain.BaseEntity;
  * @date 2024-12-20
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class DataPoint extends BaseEntity
 {
     /** ID */
     private Long pointId;
+
+    /** 采集器ID */
+    @Excel(name = "采集器ID")
+    private Long collectorId;
+
+    /** 主题 */
+    @Excel(name = "主题")
+    private String dmaTopic;
 
     /** 表名 */
     @Excel(name = "表名")

@@ -48,16 +48,26 @@ public class JSONProtocolHandler implements IProtocolHandler {
         //采用ClickHouse分区处理数据，不使用分表形式。 数据聚合以ModuleName分表。
         String tableName = DmaCollectionUtil.generateTableName(info.getModuleName());
         List<DataPoint> dataPoints = dataPointService.selectDataPointByTableName(tableName);
+
         // 将List转换为Map <pointCode, DataPoint>
         Map<String, DataPoint> dataPointMap = dataPoints.stream()
                 .collect(java.util.stream.Collectors.toMap(DataPoint::getPointCode, dataPoint -> dataPoint));
+
+        //添加默认字段
+        if(dataPointMap.get("collectorId")==null){
+            dataPointMap.put("collectorId",new DataPoint(null,info.getCollectorId(),info.getDmaTopic(), tableName,"采集器ID","collectorId","采集器ID","long",null,1,null));
+        }
+        if(dataPointMap.get("collectorName")==null){
+            dataPointMap.put("collectorName",new DataPoint(null,info.getCollectorId(),info.getDmaTopic(),tableName,"采集器名称","collectorName","采集器名称","string",null,1,null));
+        }
+
 
         // 解析JSON数据
         JSON json = JSONUtil.parse(data);
 
         // 递归遍历JSON对象存入设置的dataPointMap中
         List<Map<String,DataPoint>> recursiveResults = new ArrayList<Map<String,DataPoint>>();
-        recursiveTraversal(json,"baseData",tableName,dataPointMap,recursiveResults);
+        recursiveTraversal(json,"baseData",tableName,dataPointMap,recursiveResults,info);
 
         // 检查并创建ClickHouse表结构
         boolean tableExists = clickHouseService.isTableExists(DataConfig.CLICKHOUSE_TABLE_PREFIX+tableName);
@@ -97,10 +107,14 @@ public class JSONProtocolHandler implements IProtocolHandler {
 
         // 递归遍历JSON对象存入设置的dataPointMap中
         List<Map<String,DataPoint>> recursiveResults = new ArrayList<Map<String,DataPoint>>();
-        recursiveTraversal(json,"baseData",tableName,dataPointMap,recursiveResults);
+        recursiveTraversal(json,"baseData",tableName,dataPointMap,recursiveResults,info);
 
         // 根据解析结果保存数据到ClickHouse
         for (Map<String,DataPoint> result : recursiveResults) {
+            //添加默认字段
+            result.put("collectorId",new DataPoint(null,info.getCollectorId(),info.getDmaTopic(),tableName,"采集器ID","collectorId","采集器ID","long",null,1,info.getCollectorId()));
+            dataPointMap.put("collectorName",new DataPoint(null,info.getCollectorId(),info.getDmaTopic(),tableName,"采集器名称","collectorName","采集器名称","string",null,1,info.getCollectorName()));
+
             String insertSql = generateInsertSql(DataConfig.CLICKHOUSE_TABLE_PREFIX+tableName,collectTime,info.getDmaTopic(),result);
             clickHouseService.insert(tableName,insertSql);
         }
@@ -166,7 +180,7 @@ public class JSONProtocolHandler implements IProtocolHandler {
         return sqlBuilder.toString();
     }
 
-    public void recursiveTraversal(JSON json,String baseKey,String tableName,Map<String,DataPoint> dataPointMap,List<Map<String,DataPoint>> recursiveResults) {
+    public void recursiveTraversal(JSON json,String baseKey,String tableName,Map<String,DataPoint> dataPointMap,List<Map<String,DataPoint>> recursiveResults,CollectorInfo info) {
         if (json instanceof JSONObject) {
             // 如果是JSON对象，遍历其键值对，并对值继续递归遍历
             JSONObject jsonObject = (JSONObject) json;
@@ -175,10 +189,10 @@ public class JSONProtocolHandler implements IProtocolHandler {
                 Object value = entry.getValue();
                 log.info("键: " + key + ", 值: " + value);
                 if (value instanceof JSON) {
-                    recursiveTraversal((JSON) value,key, tableName,dataPointMap,recursiveResults);
+                    recursiveTraversal((JSON) value,key, tableName,dataPointMap,recursiveResults,info);
                 }else{
                     DataPoint dataPoint = dataPointMap.get(key);
-                    dataPoint = convertToDataPoint(dataPoint,tableName,key,value);
+                    dataPoint = convertToDataPoint(dataPoint,tableName,key,value,info);
                     // 过滤掉不支持的数据类型
                     if(dataPoint==null){
                         continue;
@@ -195,11 +209,11 @@ public class JSONProtocolHandler implements IProtocolHandler {
                 if (element instanceof JSON) {
                     Map<String,DataPoint> targetDataPointMap = new HashMap<>();
                     recursiveResults.add(targetDataPointMap);
-                    recursiveTraversal((JSON) element, baseKey ,tableName,dataPointMap,recursiveResults);
+                    recursiveTraversal((JSON) element, baseKey ,tableName,dataPointMap,recursiveResults,info);
                 }else{
                     //数组类数据处理成JSON类型
                     DataPoint dataPoint = dataPointMap.get(baseKey);
-                    dataPoint = convertToDataPoint(dataPoint,tableName,baseKey,jsonArray);
+                    dataPoint = convertToDataPoint(dataPoint,tableName,baseKey,jsonArray,info);
                     // 过滤掉不支持的数据类型
                     if(dataPoint==null){
                         continue;
@@ -219,9 +233,11 @@ public class JSONProtocolHandler implements IProtocolHandler {
      * @param value
      * @return
      */
-    private DataPoint convertToDataPoint(DataPoint dataPoint,String tableName, String key, Object value) {
+    private DataPoint convertToDataPoint(DataPoint dataPoint,String tableName, String key, Object value,CollectorInfo info) {
         if(dataPoint==null){
             dataPoint = new DataPoint();
+            dataPoint.setCollectorId(info.getCollectorId());
+            dataPoint.setDmaTopic(info.getDmaTopic());
             dataPoint.setPointCode(key);
             dataPoint.setPointName(key);
             dataPoint.setDataType(extractDataType(value));

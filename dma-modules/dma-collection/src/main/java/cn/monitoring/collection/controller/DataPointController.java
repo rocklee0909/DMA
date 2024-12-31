@@ -3,6 +3,10 @@ package cn.monitoring.collection.controller;
 import java.util.List;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
+
+import cn.monitoring.collection.domain.CollectorInfo;
+import cn.monitoring.collection.service.ICollectorInfoService;
+import cn.monitoring.system.api.domain.SysDept;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +36,9 @@ import cn.monitoring.common.core.web.page.TableDataInfo;
 @RequestMapping("/dataPoint")
 public class DataPointController extends BaseController
 {
+    @Autowired
+    private ICollectorInfoService collectorInfoService;
+
     @Autowired
     private IDataPointService dataPointService;
 
@@ -78,6 +85,10 @@ public class DataPointController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody DataPoint dataPoint)
     {
+        if(dataPoint.getCollectorId()!=null){
+            CollectorInfo collectorInfo = collectorInfoService.selectCollectorInfoByCollectorId(dataPoint.getCollectorId());
+            dataPoint.setDmaTopic(collectorInfo.getDmaTopic());
+        }
         return toAjax(dataPointService.insertDataPoint(dataPoint));
     }
 
@@ -89,6 +100,10 @@ public class DataPointController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody DataPoint dataPoint)
     {
+        if(dataPoint.getCollectorId()!=null){
+            CollectorInfo collectorInfo = collectorInfoService.selectCollectorInfoByCollectorId(dataPoint.getCollectorId());
+            dataPoint.setDmaTopic(collectorInfo.getDmaTopic());
+        }
         return toAjax(dataPointService.updateDataPoint(dataPoint));
     }
 
@@ -101,5 +116,15 @@ public class DataPointController extends BaseController
     public AjaxResult remove(@PathVariable Long[] pointIds)
     {
         return toAjax(dataPointService.deleteDataPointByPointIds(pointIds));
+    }
+
+    /**
+     * 获取采集器树列表
+     */
+    @RequiresPermissions("collection:dataPoint:list")
+    @GetMapping("/collectorTree")
+    public AjaxResult collectorTree(CollectorInfo collectorInfo)
+    {
+        return success(collectorInfoService.selectCollectorTreeList(collectorInfo));
     }
 }

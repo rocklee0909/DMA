@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.monitoring.factory.mapper.EquipmentModuleMapper">
+    
+    <resultMap type="EquipmentModule" id="EquipmentModuleResult">
+        <result property="equipmentModuleId"    column="equipment_module_id"    />
+        <result property="equipmentInfoId"    column="equipment_info_id"    />
+        <result property="equipmentInfoName"    column="equipment_info_name"    />
+        <result property="equipmentCode"    column="equipment_code"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="equipmentModel"    column="equipment_model"    />
+        <result property="equipmentType"    column="equipment_type"    />
+        <result property="supplier"    column="supplier"    />
+        <result property="equipmentStatus"    column="equipment_status"    />
+        <result property="mainFunction"    column="main_function"    />
+        <result property="technicalSpecifications"    column="technical_specifications"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectEquipmentModuleVo">
+        select equipment_module_id, equipment_info_id, equipment_info_name, equipment_code, equipment_name, equipment_model, equipment_type, supplier, equipment_status, main_function, technical_specifications, create_by, create_time, update_by, update_time from equipment_module
+    </sql>
+
+    <select id="selectEquipmentModuleList" parameterType="EquipmentModule" resultMap="EquipmentModuleResult">
+        <include refid="selectEquipmentModuleVo"/>
+        <where>  
+            <if test="equipmentInfoId != null "> and equipment_info_id = #{equipmentInfoId}</if>
+            <if test="equipmentInfoName != null "> and equipment_info_name like concat('%', #{equipmentInfoName}, '%')</if>
+            <if test="equipmentCode != null  and equipmentCode != ''"> and equipment_code = #{equipmentCode}</if>
+            <if test="equipmentName != null  and equipmentName != ''"> and equipment_name like concat('%', #{equipmentName}, '%')</if>
+            <if test="equipmentModel != null  and equipmentModel != ''"> and equipment_model = #{equipmentModel}</if>
+            <if test="equipmentType != null  and equipmentType != ''"> and equipment_type = #{equipmentType}</if>
+            <if test="supplier != null  and supplier != ''"> and supplier = #{supplier}</if>
+            <if test="equipmentStatus != null  and equipmentStatus != ''"> and equipment_status = #{equipmentStatus}</if>
+            <if test="mainFunction != null  and mainFunction != ''"> and main_function = #{mainFunction}</if>
+            <if test="technicalSpecifications != null  and technicalSpecifications != ''"> and technical_specifications = #{technicalSpecifications}</if>
+        </where>
+    </select>
+    
+    <select id="selectEquipmentModuleByEquipmentModuleId" parameterType="Long" resultMap="EquipmentModuleResult">
+        <include refid="selectEquipmentModuleVo"/>
+        where equipment_module_id = #{equipmentModuleId}
+    </select>
+
+    <insert id="insertEquipmentModule" parameterType="EquipmentModule" useGeneratedKeys="true" keyProperty="equipmentModuleId">
+        insert into equipment_module
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="equipmentInfoId != null">equipment_info_id,</if>
+            <if test="equipmentInfoName != null">equipment_info_name,</if>
+            <if test="equipmentCode != null">equipment_code,</if>
+            <if test="equipmentName != null and equipmentName != ''">equipment_name,</if>
+            <if test="equipmentModel != null">equipment_model,</if>
+            <if test="equipmentType != null">equipment_type,</if>
+            <if test="supplier != null">supplier,</if>
+            <if test="equipmentStatus != null and equipmentStatus != ''">equipment_status,</if>
+            <if test="mainFunction != null">main_function,</if>
+            <if test="technicalSpecifications != null">technical_specifications,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="equipmentInfoId != null">#{equipmentInfoId},</if>
+            <if test="equipmentInfoName != null">#{equipmentInfoName},</if>
+            <if test="equipmentCode != null">#{equipmentCode},</if>
+            <if test="equipmentName != null and equipmentName != ''">#{equipmentName},</if>
+            <if test="equipmentModel != null">#{equipmentModel},</if>
+            <if test="equipmentType != null">#{equipmentType},</if>
+            <if test="supplier != null">#{supplier},</if>
+            <if test="equipmentStatus != null and equipmentStatus != ''">#{equipmentStatus},</if>
+            <if test="mainFunction != null">#{mainFunction},</if>
+            <if test="technicalSpecifications != null">#{technicalSpecifications},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEquipmentModule" parameterType="EquipmentModule">
+        update equipment_module
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="equipmentInfoId != null">equipment_info_id = #{equipmentInfoId},</if>
+            <if test="equipmentInfoName != null">equipment_info_name = #{equipmentInfoName},</if>
+            <if test="equipmentCode != null">equipment_code = #{equipmentCode},</if>
+            <if test="equipmentName != null and equipmentName != ''">equipment_name = #{equipmentName},</if>
+            <if test="equipmentModel != null">equipment_model = #{equipmentModel},</if>
+            <if test="equipmentType != null">equipment_type = #{equipmentType},</if>
+            <if test="supplier != null">supplier = #{supplier},</if>
+            <if test="equipmentStatus != null and equipmentStatus != ''">equipment_status = #{equipmentStatus},</if>
+            <if test="mainFunction != null">main_function = #{mainFunction},</if>
+            <if test="technicalSpecifications != null">technical_specifications = #{technicalSpecifications},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where equipment_module_id = #{equipmentModuleId}
+    </update>
+
+    <delete id="deleteEquipmentModuleByEquipmentModuleId" parameterType="Long">
+        delete from equipment_module where equipment_module_id = #{equipmentModuleId}
+    </delete>
+
+    <delete id="deleteEquipmentModuleByEquipmentModuleIds" parameterType="String">
+        delete from equipment_module where equipment_module_id in 
+        <foreach item="equipmentModuleId" collection="array" open="(" separator="," close=")">
+            #{equipmentModuleId}
+        </foreach>
+    </delete>
+</mapper>

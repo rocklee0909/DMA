@@ -3,6 +3,8 @@ package cn.monitoring.system.domain.vo;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import cn.monitoring.factory.domain.FactoryModel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import cn.monitoring.system.api.domain.SysDept;
 import cn.monitoring.system.domain.SysMenu;
@@ -44,6 +46,13 @@ public class TreeSelect implements Serializable
         this.label = menu.getMenuName();
         this.children = menu.getChildren().stream().map(TreeSelect::new).collect(Collectors.toList());
     }
+
+    public TreeSelect(FactoryModel factoryModel) {
+        this.id = factoryModel.getModelId();
+        this.label = factoryModel.getModelName();
+        this.children = factoryModel.getChildren().stream().map(TreeSelect::new).collect(Collectors.toList());
+    }
+
 
     public Long getId()
     {

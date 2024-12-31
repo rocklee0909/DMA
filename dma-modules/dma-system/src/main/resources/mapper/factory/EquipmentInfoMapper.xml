@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.monitoring.factory.mapper.EquipmentInfoMapper">
+    
+    <resultMap type="EquipmentInfo" id="EquipmentInfoResult">
+        <result property="equipmentInfoId"    column="equipment_info_id"    />
+        <result property="factoryModelId"    column="factory_model_id"    />
+        <result property="equipmentCode"    column="equipment_code"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="equipmentModel"    column="equipment_model"    />
+        <result property="equipmentType"    column="equipment_type"    />
+        <result property="childEquipmentNum"    column="child_equipment_num"    />
+        <result property="supplier"    column="supplier"    />
+        <result property="equipmentStatus"    column="equipment_status"    />
+        <result property="equipmentDescription"    column="equipment_description"    />
+        <result property="mainFunction"    column="main_function"    />
+        <result property="technicalSpecifications"    column="technical_specifications"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectEquipmentInfoVo">
+        select equipment_info_id, factory_model_id, equipment_code, equipment_name, equipment_model, equipment_type, child_equipment_num, supplier, equipment_status, equipment_description, main_function, technical_specifications, create_by, create_time, update_by, update_time from equipment_info
+    </sql>
+
+    <select id="selectEquipmentInfoList" parameterType="EquipmentInfo" resultMap="EquipmentInfoResult">
+        <include refid="selectEquipmentInfoVo"/>
+        <where>  
+            <if test="factoryModelId != null "> and factory_model_id = #{factoryModelId}</if>
+            <if test="equipmentCode != null  and equipmentCode != ''"> and equipment_code = #{equipmentCode}</if>
+            <if test="equipmentName != null  and equipmentName != ''"> and equipment_name like concat('%', #{equipmentName}, '%')</if>
+            <if test="equipmentModel != null  and equipmentModel != ''"> and equipment_model like concat('%', #{equipmentModel}, '%')</if>
+            <if test="equipmentType != null  and equipmentType != ''"> and equipment_type like concat('%', #{equipmentType}, '%')</if>
+            <if test="childEquipmentNum != null "> and child_equipment_num = #{childEquipmentNum}</if>
+            <if test="supplier != null  and supplier != ''"> and supplier like concat('%', #{supplier}, '%')</if>
+            <if test="equipmentStatus != null  and equipmentStatus != ''"> and equipment_status = #{equipmentStatus}</if>
+            <if test="equipmentDescription != null  and equipmentDescription != ''"> and equipment_description like concat('%', #{equipmentDescription}, '%')</if>
+            <if test="mainFunction != null  and mainFunction != ''"> and main_function like concat('%', #{mainFunction}, '%')</if>
+            <if test="technicalSpecifications != null  and technicalSpecifications != ''"> and technical_specifications like concat('%', #{technicalSpecifications}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectEquipmentInfoByEquipmentInfoId" parameterType="Long" resultMap="EquipmentInfoResult">
+        <include refid="selectEquipmentInfoVo"/>
+        where equipment_info_id = #{equipmentInfoId}
+    </select>
+
+    <insert id="insertEquipmentInfo" parameterType="EquipmentInfo" useGeneratedKeys="true" keyProperty="equipmentInfoId">
+        insert into equipment_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="factoryModelId != null">factory_model_id,</if>
+            <if test="equipmentCode != null">equipment_code,</if>
+            <if test="equipmentName != null and equipmentName != ''">equipment_name,</if>
+            <if test="equipmentModel != null">equipment_model,</if>
+            <if test="equipmentType != null">equipment_type,</if>
+            <if test="childEquipmentNum != null">child_equipment_num,</if>
+            <if test="supplier != null">supplier,</if>
+            <if test="equipmentStatus != null and equipmentStatus != ''">equipment_status,</if>
+            <if test="equipmentDescription != null">equipment_description,</if>
+            <if test="mainFunction != null">main_function,</if>
+            <if test="technicalSpecifications != null">technical_specifications,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="factoryModelId != null">#{factoryModelId},</if>
+            <if test="equipmentCode != null">#{equipmentCode},</if>
+            <if test="equipmentName != null and equipmentName != ''">#{equipmentName},</if>
+            <if test="equipmentModel != null">#{equipmentModel},</if>
+            <if test="equipmentType != null">#{equipmentType},</if>
+            <if test="childEquipmentNum != null">#{childEquipmentNum},</if>
+            <if test="supplier != null">#{supplier},</if>
+            <if test="equipmentStatus != null and equipmentStatus != ''">#{equipmentStatus},</if>
+            <if test="equipmentDescription != null">#{equipmentDescription},</if>
+            <if test="mainFunction != null">#{mainFunction},</if>
+            <if test="technicalSpecifications != null">#{technicalSpecifications},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEquipmentInfo" parameterType="EquipmentInfo">
+        update equipment_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="factoryModelId != null">factory_model_id = #{factoryModelId},</if>
+            <if test="equipmentCode != null">equipment_code = #{equipmentCode},</if>
+            <if test="equipmentName != null and equipmentName != ''">equipment_name = #{equipmentName},</if>
+            <if test="equipmentModel != null">equipment_model = #{equipmentModel},</if>
+            <if test="equipmentType != null">equipment_type = #{equipmentType},</if>
+            <if test="childEquipmentNum != null">child_equipment_num = #{childEquipmentNum},</if>
+            <if test="supplier != null">supplier = #{supplier},</if>
+            <if test="equipmentStatus != null and equipmentStatus != ''">equipment_status = #{equipmentStatus},</if>
+            <if test="equipmentDescription != null">equipment_description = #{equipmentDescription},</if>
+            <if test="mainFunction != null">main_function = #{mainFunction},</if>
+            <if test="technicalSpecifications != null">technical_specifications = #{technicalSpecifications},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where equipment_info_id = #{equipmentInfoId}
+    </update>
+
+    <delete id="deleteEquipmentInfoByEquipmentInfoId" parameterType="Long">
+        delete from equipment_info where equipment_info_id = #{equipmentInfoId}
+    </delete>
+
+    <delete id="deleteEquipmentInfoByEquipmentInfoIds" parameterType="String">
+        delete from equipment_info where equipment_info_id in 
+        <foreach item="equipmentInfoId" collection="array" open="(" separator="," close=")">
+            #{equipmentInfoId}
+        </foreach>
+    </delete>
+</mapper>

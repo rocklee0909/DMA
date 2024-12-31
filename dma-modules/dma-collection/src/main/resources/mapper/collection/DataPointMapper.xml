@@ -6,6 +6,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="DataPoint" id="DataPointResult">
         <result property="pointId"    column="point_id"    />
+        <result property="collectorId"    column="collector_id"    />
+        <result property="dmaTopic"    column="dma_topic"    />
         <result property="tableName"    column="table_name"    />
         <result property="pointName"    column="point_name"    />
         <result property="pointCode"    column="point_code"    />
@@ -18,12 +20,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectDataPointVo">
-        select point_id, table_name, point_name, point_code, description, data_type, unit, is_active, create_time, update_time from data_point
+        select point_id, collector_id, dma_topic, table_name, point_name, point_code, description, data_type, unit, is_active, create_time, update_time from data_point
     </sql>
 
     <select id="selectDataPointList" parameterType="DataPoint" resultMap="DataPointResult">
         <include refid="selectDataPointVo"/>
         <where>
+            <if test="collectorId != null "> and collector_id = #{collectorId}</if>
+            <if test="dmaTopic != null  and dmaTopic != ''"> and dma_topic = #{dmaTopic}</if>
             <if test="tableName != null  and tableName != ''"> and table_name like concat('%', #{tableName}, '%')</if>
             <if test="pointName != null  and pointName != ''"> and point_name like concat('%', #{pointName}, '%')</if>
             <if test="pointCode != null  and pointCode != ''"> and point_code = #{pointCode}</if>
@@ -42,6 +46,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertDataPoint" parameterType="DataPoint" useGeneratedKeys="true" keyProperty="pointId">
         insert into data_point
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="collectorId != null">collector_id,</if>
+            <if test="dmaTopic != null">dma_topic,</if>
             <if test="tableName != null">table_name,</if>
             <if test="pointName != null and pointName != ''">point_name,</if>
             <if test="pointCode != null">point_code,</if>
@@ -51,8 +57,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isActive != null">is_active,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="collectorId != null">#{collectorId},</if>
+            <if test="dmaTopic != null">#{dmaTopic},</if>
             <if test="tableName != null">#{tableName},</if>
             <if test="pointName != null and pointName != ''">#{pointName},</if>
             <if test="pointCode != null">#{pointCode},</if>
@@ -62,12 +70,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isActive != null">#{isActive},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateDataPoint" parameterType="DataPoint">
         update data_point
         <trim prefix="SET" suffixOverrides=",">
+            <if test="collectorId != null">collector_id = #{collectorId},</if>
+            <if test="dmaTopic != null">dma_topic = #{dmaTopic},</if>
             <if test="tableName != null">table_name = #{tableName},</if>
             <if test="pointName != null and pointName != ''">point_name = #{pointName},</if>
             <if test="pointCode != null">point_code = #{pointCode},</if>
@@ -92,6 +102,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <!--自定义内容-->
     <select id="selectDataPointByTableName" parameterType="String" resultMap="DataPointResult">
         <include refid="selectDataPointVo"/>
         where table_name = #{tableName}

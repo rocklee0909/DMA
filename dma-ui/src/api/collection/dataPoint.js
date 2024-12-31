@@ -42,3 +42,10 @@ export function delDataPoint(pointId) {
     method: 'delete'
   })
 }
+
+export function collectorTreeSelect(){
+  return request({
+    url: '/collection/dataPoint/collectorTree',
+    method: 'get'
+  })
+}

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.monitoring.collection.mapper.DataTypeMapper">
+    
+    <resultMap type="DataType" id="DataTypeResult">
+        <result property="typeId"    column="type_id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="ancestors"    column="ancestors"    />
+        <result property="typeName"    column="type_name"    />
+        <result property="typeCode"    column="type_code"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="typeGroup"    column="type_group"    />
+        <result property="dataNum"    column="data_num"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectDataTypeVo">
+        select type_id, parent_id, ancestors, type_name, type_code, order_num, type_group, data_num, create_by, create_time, update_by, update_time from data_type
+    </sql>
+
+    <select id="selectDataTypeList" parameterType="DataType" resultMap="DataTypeResult">
+        <include refid="selectDataTypeVo"/>
+        <where>  
+            <if test="typeName != null  and typeName != ''"> and type_name like concat('%', #{typeName}, '%')</if>
+            <if test="typeCode != null  and typeCode != ''"> and type_code = #{typeCode}</if>
+            <if test="typeGroup != null  and typeGroup != ''"> and type_group = #{typeGroup}</if>
+        </where>
+    </select>
+    
+    <select id="selectDataTypeByTypeId" parameterType="Long" resultMap="DataTypeResult">
+        <include refid="selectDataTypeVo"/>
+        where type_id = #{typeId}
+    </select>
+
+    <insert id="insertDataType" parameterType="DataType" useGeneratedKeys="true" keyProperty="typeId">
+        insert into data_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">parent_id,</if>
+            <if test="ancestors != null">ancestors,</if>
+            <if test="typeName != null and typeName != ''">type_name,</if>
+            <if test="typeCode != null">type_code,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="typeGroup != null">type_group,</if>
+            <if test="dataNum != null">data_num,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">#{parentId},</if>
+            <if test="ancestors != null">#{ancestors},</if>
+            <if test="typeName != null and typeName != ''">#{typeName},</if>
+            <if test="typeCode != null">#{typeCode},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="typeGroup != null">#{typeGroup},</if>
+            <if test="dataNum != null">#{dataNum},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDataType" parameterType="DataType">
+        update data_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="ancestors != null">ancestors = #{ancestors},</if>
+            <if test="typeName != null and typeName != ''">type_name = #{typeName},</if>
+            <if test="typeCode != null">type_code = #{typeCode},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="typeGroup != null">type_group = #{typeGroup},</if>
+            <if test="dataNum != null">data_num = #{dataNum},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where type_id = #{typeId}
+    </update>
+
+    <delete id="deleteDataTypeByTypeId" parameterType="Long">
+        delete from data_type where type_id = #{typeId}
+    </delete>
+
+    <delete id="deleteDataTypeByTypeIds" parameterType="String">
+        delete from data_type where type_id in 
+        <foreach item="typeId" collection="array" open="(" separator="," close=")">
+            #{typeId}
+        </foreach>
+    </delete>
+
+    <!-- 自定义内容 -->
+    <select id="selectChildrenDataTypeById" parameterType="Long" resultMap="DataTypeResult">
+        select * from data_type where find_in_set(#{typeId}, ancestors)
+    </select>
+
+    <update id="updateDataTypeChildren" parameterType="java.util.List">
+        update data_type set ancestors =
+        <foreach collection="dataTypes" item="item" index="index"
+                 separator=" " open="case type_id" close="end">
+            when #{item.typeId} then #{item.ancestors}
+        </foreach>
+        where type_id in
+        <foreach collection="dataTypes" item="item" index="index"
+                 separator="," open="(" close=")">
+            #{item.typeId}
+        </foreach>
+    </update>
+</mapper>

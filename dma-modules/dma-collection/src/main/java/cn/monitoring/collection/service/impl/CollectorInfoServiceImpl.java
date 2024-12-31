@@ -1,8 +1,11 @@
 package cn.monitoring.collection.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import cn.monitoring.collection.domain.vo.TreeSelect;
 import cn.monitoring.collection.jobs.CollectorInfoDataReceiveJob;
 import cn.monitoring.collection.jobs.DmaKafkaCollectorDataJob;
 import cn.monitoring.collection.mapper.CollectorInfoMapper;
@@ -11,6 +14,7 @@ import cn.monitoring.common.core.utils.SpringUtils;
 import cn.monitoring.common.kafka.consumer.IManualBindConsumer;
 import cn.monitoring.common.kafka.utils.KafkaUtil;
 import cn.monitoring.common.security.utils.SecurityUtils;
+import cn.monitoring.system.api.domain.SysDept;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -159,5 +163,24 @@ public class CollectorInfoServiceImpl implements ICollectorInfoService
     @Override
     public List<CollectorInfo> selectCollectorInfoByDmaTopic(String topic) {
         return collectorInfoMapper.selectCollectorInfoByDmaTopic(topic);
+    }
+
+    @Override
+    public List<TreeSelect> selectCollectorTreeList(CollectorInfo collectorInfo) {
+        List<CollectorInfo> collectorInfos = selectCollectorInfoList(collectorInfo);
+        return buildCollectorInfoTreeSelect(collectorInfos);
+    }
+
+    private List<TreeSelect> buildCollectorInfoTreeSelect(List<CollectorInfo> collectorInfos) {
+        List<TreeSelect> treeSelects = new ArrayList<>();
+        collectorInfos.forEach(collectorInfo -> {
+            TreeSelect treeSelect = new TreeSelect();
+            treeSelect.setId(collectorInfo.getCollectorId());
+            treeSelect.setLabel(collectorInfo.getCollectorName()+"["+collectorInfo.getDmaTopic()+"]");
+            treeSelect.setDmaTopic(collectorInfo.getDmaTopic());
+            treeSelect.setChildren(Collections.emptyList());
+            treeSelects.add(treeSelect);
+        });
+        return treeSelects;
     }
 }

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.monitoring.process.mapper.ProcessFlowMapper">
+    
+    <resultMap type="ProcessFlow" id="ProcessFlowResult">
+        <result property="flowId"    column="flow_id"    />
+        <result property="recipeId"    column="recipe_id"    />
+        <result property="recipeCode"    column="recipe_code"    />
+        <result property="recipeName"    column="recipe_name"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="flowName"    column="flow_name"    />
+        <result property="flowTime"    column="flow_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectProcessFlowVo">
+        select flow_id, recipe_id, recipe_code, recipe_name, order_num, flow_name, flow_time, remark, create_by, create_time, update_by, update_time from process_flow
+    </sql>
+
+    <select id="selectProcessFlowList" parameterType="ProcessFlow" resultMap="ProcessFlowResult">
+        <include refid="selectProcessFlowVo"/>
+        <where>  
+            <if test="recipeId != null "> and recipe_id = #{recipeId}</if>
+            <if test="recipeCode != null  and recipeCode != ''"> and recipe_code = #{recipeCode}</if>
+            <if test="recipeName != null  and recipeName != ''"> and recipe_name like concat('%', #{recipeName}, '%')</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            <if test="flowName != null  and flowName != ''"> and flow_name like concat('%', #{flowName}, '%')</if>
+            <if test="flowTime != null "> and flow_time = #{flowTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectProcessFlowByFlowId" parameterType="Long" resultMap="ProcessFlowResult">
+        <include refid="selectProcessFlowVo"/>
+        where flow_id = #{flowId}
+    </select>
+
+    <insert id="insertProcessFlow" parameterType="ProcessFlow" useGeneratedKeys="true" keyProperty="flowId">
+        insert into process_flow
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recipeId != null">recipe_id,</if>
+            <if test="recipeCode != null and recipeCode != ''">recipe_code,</if>
+            <if test="recipeName != null">recipe_name,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="flowName != null">flow_name,</if>
+            <if test="flowTime != null">flow_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recipeId != null">#{recipeId},</if>
+            <if test="recipeCode != null and recipeCode != ''">#{recipeCode},</if>
+            <if test="recipeName != null">#{recipeName},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="flowName != null">#{flowName},</if>
+            <if test="flowTime != null">#{flowTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProcessFlow" parameterType="ProcessFlow">
+        update process_flow
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recipeId != null">recipe_id = #{recipeId},</if>
+            <if test="recipeCode != null and recipeCode != ''">recipe_code = #{recipeCode},</if>
+            <if test="recipeName != null">recipe_name = #{recipeName},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="flowName != null">flow_name = #{flowName},</if>
+            <if test="flowTime != null">flow_time = #{flowTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where flow_id = #{flowId}
+    </update>
+
+    <delete id="deleteProcessFlowByFlowId" parameterType="Long">
+        delete from process_flow where flow_id = #{flowId}
+    </delete>
+
+    <delete id="deleteProcessFlowByFlowIds" parameterType="String">
+        delete from process_flow where flow_id in 
+        <foreach item="flowId" collection="array" open="(" separator="," close=")">
+            #{flowId}
+        </foreach>
+    </delete>
+</mapper>

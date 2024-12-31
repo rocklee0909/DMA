@@ -43,4 +43,12 @@ public class CollectorInfo extends BaseEntity
     /** 主题 */
     @Excel(name = "主题")
     private String dmaTopic;
+
+    /** 限制数据点接收数 */
+    @Excel(name = "限制数据点接收数")
+    private Integer limitDataNum;
+
+    /** 有效数据点数量 */
+    @Excel(name = "有效数据点数量")
+    private Integer validDataNum;
 }

@@ -108,6 +108,8 @@
       </el-table-column>
       <el-table-column label="组名称" align="center" prop="dmaGroup" />
       <el-table-column label="主题" align="center" prop="dmaTopic" />
+      <el-table-column label="限制接收数" align="center" prop="limitDataNum"/>
+      <el-table-column label="有效数据点数量" align="center" prop="validDataNum" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
