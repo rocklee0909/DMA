@@ -1,7 +1,6 @@
 package cn.monitoring.factory.controller;
 
 import java.util.List;
-import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,6 @@ import cn.monitoring.common.log.enums.BusinessType;
 import cn.monitoring.common.security.annotation.RequiresPermissions;
 import cn.monitoring.factory.domain.EquipmentModule;
 import cn.monitoring.factory.service.IEquipmentModuleService;
-import cn.monitoring.common.core.utils.DateUtils;
 import cn.monitoring.common.core.web.controller.BaseController;
 import cn.monitoring.common.core.web.domain.AjaxResult;
 import cn.monitoring.common.core.utils.poi.ExcelUtil;
@@ -57,7 +55,7 @@ public class EquipmentModuleController extends BaseController
     public void export(HttpServletResponse response, EquipmentModule equipmentModule)
     {
         List<EquipmentModule> list = equipmentModuleService.selectEquipmentModuleList(equipmentModule);
-        ExcelUtil<EquipmentModule> util = new ExcelUtil<EquipmentModule>(EquipmentModule.class);
+        ExcelUtil<EquipmentModule> util = new ExcelUtil<>(EquipmentModule.class);
         util.exportExcel(response, list, "设备模块信息-子设备数据");
     }
 

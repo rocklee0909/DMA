@@ -1,10 +1,6 @@
 package cn.monitoring.collection.service.impl;
 
-import java.util.Collections;
 import java.util.List;
-
-import cn.monitoring.collection.domain.CollectorInfo;
-import cn.monitoring.collection.domain.vo.TreeSelect;
 import cn.monitoring.common.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

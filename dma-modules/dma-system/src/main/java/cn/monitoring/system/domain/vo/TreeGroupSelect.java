@@ -1,14 +1,9 @@
 package cn.monitoring.system.domain.vo;
 
-import cn.monitoring.factory.domain.FactoryModel;
-import cn.monitoring.system.api.domain.SysDept;
-import cn.monitoring.system.domain.SysMenu;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Treeselect组合树结构实体类

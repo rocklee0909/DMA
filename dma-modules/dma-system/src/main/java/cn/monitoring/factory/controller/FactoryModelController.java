@@ -1,13 +1,10 @@
 package cn.monitoring.factory.controller;
 
 import java.util.List;
-import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
-
 import cn.monitoring.common.core.constant.UserConstants;
 import cn.monitoring.common.core.utils.StringUtils;
 import cn.monitoring.common.security.utils.SecurityUtils;
-import cn.monitoring.system.api.domain.SysDept;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,7 +58,7 @@ public class FactoryModelController extends BaseController
     public void export(HttpServletResponse response, FactoryModel factoryModel)
     {
         List<FactoryModel> list = factoryModelService.selectFactoryModelList(factoryModel);
-        ExcelUtil<FactoryModel> util = new ExcelUtil<FactoryModel>(FactoryModel.class);
+        ExcelUtil<FactoryModel> util = new ExcelUtil<>(FactoryModel.class);
         util.exportExcel(response, list, "工厂建模数据");
     }
 

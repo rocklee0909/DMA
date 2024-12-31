@@ -1,11 +1,8 @@
 package cn.monitoring.collection.controller;
 
 import java.util.List;
-import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
-
 import cn.monitoring.collection.domain.CollectorInfo;
-import cn.monitoring.collection.jobs.CollectorInfoDataReceiveJob;
 import cn.monitoring.collection.service.ICollectorInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +18,6 @@ import cn.monitoring.common.log.enums.BusinessType;
 import cn.monitoring.common.security.annotation.RequiresPermissions;
 import cn.monitoring.collection.domain.DataTypePoint;
 import cn.monitoring.collection.service.IDataTypePointService;
-import cn.monitoring.common.core.utils.DateUtils;
 import cn.monitoring.common.core.web.controller.BaseController;
 import cn.monitoring.common.core.web.domain.AjaxResult;
 import cn.monitoring.common.core.utils.poi.ExcelUtil;

@@ -2,10 +2,8 @@ package cn.monitoring.collection.service.impl;
 
 import java.util.List;
 
-import cn.monitoring.common.core.constant.UserConstants;
 import cn.monitoring.common.core.utils.StringUtils;
 import cn.monitoring.common.security.utils.SecurityUtils;
-import cn.monitoring.system.api.domain.SysDept;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cn.monitoring.common.core.utils.DateUtils;

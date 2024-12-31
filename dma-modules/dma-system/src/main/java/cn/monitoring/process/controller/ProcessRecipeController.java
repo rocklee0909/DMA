@@ -2,7 +2,6 @@ package cn.monitoring.process.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
 import cn.monitoring.factory.domain.EquipmentInfo;
@@ -77,7 +76,7 @@ public class ProcessRecipeController extends BaseController
     public void export(HttpServletResponse response, ProcessRecipe processRecipe)
     {
         List<ProcessRecipe> list = processRecipeService.selectProcessRecipeList(processRecipe);
-        ExcelUtil<ProcessRecipe> util = new ExcelUtil<ProcessRecipe>(ProcessRecipe.class);
+        ExcelUtil<ProcessRecipe> util = new ExcelUtil<>(ProcessRecipe.class);
         util.exportExcel(response, list, "工艺配方信息数据");
     }
 
