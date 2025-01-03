@@ -77,7 +77,7 @@ public class JSONProtocolHandler implements IProtocolHandler {
         }
         // 检查并添加ClickHouse表列
         for (DataPoint dataPoint : dataPointMap.values()) {
-            String columnName = dataPoint.getPointName();
+            String columnName = dataPoint.getPointCode();
             String dataType = dataPoint.getDataType();
             boolean columnExists = clickHouseService.isColumnExists(DataConfig.CLICKHOUSE_TABLE_PREFIX+tableName,DataConfig.CLICKHOUSE_COLUMN_PREFIX+columnName);
             if(!columnExists){
@@ -198,6 +198,11 @@ public class JSONProtocolHandler implements IProtocolHandler {
                         continue;
                     }
                     dataPointMap.put(key,dataPoint);
+
+                    if(recursiveResults.isEmpty()){
+                        Map<String,DataPoint> targetDataPointMap = new HashMap<>();
+                        recursiveResults.add(targetDataPointMap);
+                    }
                     recursiveResults.get(recursiveResults.size()-1).put(key,dataPoint);
                 }
             }

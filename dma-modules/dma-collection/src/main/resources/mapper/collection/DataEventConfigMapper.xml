@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.monitoring.collection.mapper.DataEventConfigMapper">
+    
+    <resultMap type="DataEventConfig" id="DataEventConfigResult">
+        <result property="eventId"    column="event_id"    />
+        <result property="factoryModelId"    column="factory_model_id"    />
+        <result property="eventName"    column="event_name"    />
+        <result property="triggerCondition"    column="trigger_condition"    />
+        <result property="latestSerial"    column="latest_serial"    />
+        <result property="checkRate"    column="check_rate"    />
+        <result property="checkTime"    column="check_time"    />
+        <result property="checkEquipmentNum"    column="check_equipment_num"    />
+        <result property="status"    column="status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectDataEventConfigVo">
+        select event_id, factory_model_id, event_name, trigger_condition, latest_serial, check_rate, check_time, check_equipment_num, status, del_flag, create_by, create_time, update_by, update_time from data_event_config
+    </sql>
+
+    <select id="selectDataEventConfigList" parameterType="DataEventConfig" resultMap="DataEventConfigResult">
+        <include refid="selectDataEventConfigVo"/>
+        <where>  
+            <if test="eventName != null  and eventName != ''"> and event_name like concat('%', #{eventName}, '%')</if>
+            <if test="checkTime != null "> and check_time = #{checkTime}</if>
+            <if test="checkEquipmentNum != null "> and check_equipment_num = #{checkEquipmentNum}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectDataEventConfigByEventId" parameterType="Long" resultMap="DataEventConfigResult">
+        <include refid="selectDataEventConfigVo"/>
+        where event_id = #{eventId}
+    </select>
+
+    <insert id="insertDataEventConfig" parameterType="DataEventConfig" useGeneratedKeys="true" keyProperty="eventId">
+        insert into data_event_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="factoryModelId != null">factory_model_id,</if>
+            <if test="eventName != null">event_name,</if>
+            <if test="triggerCondition != null">trigger_condition,</if>
+            <if test="latestSerial != null">latest_serial,</if>
+            <if test="checkRate != null">check_rate,</if>
+            <if test="checkTime != null">check_time,</if>
+            <if test="checkEquipmentNum != null">check_equipment_num,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="factoryModelId != null">#{factoryModelId},</if>
+            <if test="eventName != null">#{eventName},</if>
+            <if test="triggerCondition != null">#{triggerCondition},</if>
+            <if test="latestSerial != null">#{latestSerial},</if>
+            <if test="checkRate != null">#{checkRate},</if>
+            <if test="checkTime != null">#{checkTime},</if>
+            <if test="checkEquipmentNum != null">#{checkEquipmentNum},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDataEventConfig" parameterType="DataEventConfig">
+        update data_event_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="factoryModelId != null">factory_model_id = #{factoryModelId},</if>
+            <if test="eventName != null">event_name = #{eventName},</if>
+            <if test="triggerCondition != null">trigger_condition = #{triggerCondition},</if>
+            <if test="latestSerial != null">latest_serial = #{latestSerial},</if>
+            <if test="checkRate != null">check_rate = #{checkRate},</if>
+            <if test="checkTime != null">check_time = #{checkTime},</if>
+            <if test="checkEquipmentNum != null">check_equipment_num = #{checkEquipmentNum},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where event_id = #{eventId}
+    </update>
+
+    <delete id="deleteDataEventConfigByEventId" parameterType="Long">
+        delete from data_event_config where event_id = #{eventId}
+    </delete>
+
+    <delete id="deleteDataEventConfigByEventIds" parameterType="String">
+        delete from data_event_config where event_id in 
+        <foreach item="eventId" collection="array" open="(" separator="," close=")">
+            #{eventId}
+        </foreach>
+    </delete>
+</mapper>

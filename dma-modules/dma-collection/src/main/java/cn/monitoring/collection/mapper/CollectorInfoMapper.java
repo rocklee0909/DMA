@@ -2,6 +2,7 @@ package cn.monitoring.collection.mapper;
 
 import java.util.List;
 import cn.monitoring.collection.domain.CollectorInfo;
+import cn.monitoring.collection.domain.DataPoint;
 
 /**
  * 采集器基本信息：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等Mapper接口
@@ -65,4 +66,19 @@ public interface CollectorInfoMapper
      * @return
      */
     public List<CollectorInfo> selectCollectorInfoByDmaTopic(String dmaTopic);
+
+    /**
+     * 根据主题和组查询采集器信息
+     * @param topic
+     * @param groupId
+     * @return
+     */
+    List<CollectorInfo> selectCollectorInfoByDmaTopicAndDmaGroup(String topic, String groupId);
+
+    /**
+     * 校验采集器ID、主题、数据点位编码是否唯一
+     * @param dataPoint
+     * @return
+     */
+    int checkCollectorIdAndTopicAndPointCodeUnique(DataPoint dataPoint);
 }

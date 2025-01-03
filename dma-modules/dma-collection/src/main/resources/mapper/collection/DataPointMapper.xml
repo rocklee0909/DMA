@@ -108,4 +108,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where table_name = #{tableName}
     </select>
 
+    <select id="checkCollectorIdAndTopicAndPointCodeUnique" parameterType="DataPoint" resultType="Integer">
+        select count(*) from data_point
+        <where>
+            <if test="collectorId!= null "> and collector_id = #{collectorId}</if>
+            <if test="dmaTopic!= null  and dmaTopic!= ''"> and dma_topic = #{dmaTopic}</if>
+            <if test="pointCode!= null"> and point_code = #{pointCode}</if>
+        </where>
+    </select>
+
 </mapper>

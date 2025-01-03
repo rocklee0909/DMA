@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.monitoring.collection.domain.CollectorInfo;
 import cn.monitoring.collection.domain.DataTypePoint;
+import cn.monitoring.collection.domain.vo.DataTypePointVo;
 import cn.monitoring.collection.domain.vo.TreeSelect;
 
 /**
@@ -33,10 +34,10 @@ public interface IDataTypePointService
     /**
      * 新增数据类型点位关联
      * 
-     * @param dataTypePoint 数据类型点位关联
+     * @param dataTypePointVo 数据类型点位关联Vo
      * @return 结果
      */
-    public int insertDataTypePoint(DataTypePoint dataTypePoint);
+    public int insertDataTypePoint(DataTypePointVo dataTypePointVo);
 
     /**
      * 修改数据类型点位关联
@@ -62,4 +63,10 @@ public interface IDataTypePointService
      */
     public int deleteDataTypePointByTypeId(Long typeId);
 
+    /**
+     * 删除数据点位关联类型信息
+     * @param pointIds
+     * @return
+     */
+    int deleteDataTypePointByPointIds(Long[] pointIds);
 }

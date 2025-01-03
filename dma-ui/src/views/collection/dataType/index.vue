@@ -177,6 +177,9 @@ export default {
         typeName: [
           { required: true, message: "类别名称不能为空", trigger: "blur" }
         ],
+        typeCode: [
+          { required: true, message: "类别编码不能为空", trigger: "blur" }
+        ]
       }
     };
   },
@@ -203,7 +206,7 @@ export default {
         children: node.children
       };
     },
-	/** 查询数据类型配置下拉树结构 */
+	  /** 查询数据类型配置下拉树结构 */
     getTreeselect() {
       listDataType().then(response => {
         this.dataTypeOptions = [];

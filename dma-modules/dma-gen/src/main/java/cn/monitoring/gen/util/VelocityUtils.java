@@ -84,7 +84,17 @@ public class VelocityUtils
         {
             setSubVelocityContext(velocityContext, genTable);
         }
+
+        if (GenConstants.TPL_RELATED.equals(tplCategory))
+        {
+            setRelatedVelocityContext(velocityContext, genTable);
+        }
+
         return velocityContext;
+    }
+
+    public static void setRelatedVelocityContext(VelocityContext velocityContext, GenTable genTable) {
+
     }
 
     public static void setMenuVelocityContext(VelocityContext context, GenTable genTable)
@@ -169,6 +179,10 @@ public class VelocityUtils
         {
             templates.add(useWebType + "/index.vue.vm");
             templates.add("vm/java/sub-domain.java.vm");
+        }
+        else if (GenConstants.TPL_RELATED.equals(tplCategory))
+        {
+            templates.add(useWebType + "/index-related.vue.vm");
         }
         return templates;
     }

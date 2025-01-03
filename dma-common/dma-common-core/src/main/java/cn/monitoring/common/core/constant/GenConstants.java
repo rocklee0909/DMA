@@ -13,6 +13,9 @@ public class GenConstants
     /** 树表（增删改查） */
     public static final String TPL_TREE = "tree";
 
+    /** 关联树表 **/
+    public static final String TPL_RELATED = "related";
+
     /** 主子表（增删改查） */
     public static final String TPL_SUB = "sub";
 

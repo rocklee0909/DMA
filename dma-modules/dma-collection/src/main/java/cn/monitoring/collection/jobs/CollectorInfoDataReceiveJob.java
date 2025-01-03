@@ -9,6 +9,7 @@ import cn.monitoring.common.core.utils.StringUtils;
 import cn.monitoring.common.kafka.consumer.IManualBindConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.header.Headers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
@@ -43,7 +44,8 @@ public class CollectorInfoDataReceiveJob implements IManualBindConsumer {
     public void consumerMessage(List<ConsumerRecord<String, Object>> message, Acknowledgment ack) {
         for (ConsumerRecord<String, Object> record : message) {
             Object msg = record.value();
-            String topic = record.topic();//主题 - 这里
+            String topic = record.topic();
+            Headers headers = record.headers();
             long receiveTime = record.timestamp();
 
             log.info("数据接收时间{},主题:{},消息内容:{}",receiveTime,topic,msg);

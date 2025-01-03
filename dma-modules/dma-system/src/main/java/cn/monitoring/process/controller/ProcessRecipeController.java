@@ -9,8 +9,7 @@ import cn.monitoring.factory.domain.FactoryModel;
 import cn.monitoring.factory.service.IEquipmentInfoService;
 import cn.monitoring.factory.service.IFactoryModelService;
 import cn.monitoring.process.domain.vo.ProcessVo;
-import cn.monitoring.process.service.IProcessFlowService;
-import cn.monitoring.system.domain.vo.TreeGroupSelect;
+import cn.monitoring.process.domain.vo.TreeGroupSelect;
 import cn.monitoring.system.domain.vo.TreeSelect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,9 +44,6 @@ public class ProcessRecipeController extends BaseController
 
     @Autowired
     private IProcessRecipeService processRecipeService;
-
-    @Autowired
-    private IProcessFlowService processFlowService;
 
     @Autowired
     private IFactoryModelService factoryModelService;

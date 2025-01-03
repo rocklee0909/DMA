@@ -1,186 +1,165 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="88px">
-      <el-form-item label="采集器名称" prop="collectorName">
-        <el-input
-          v-model="queryParams.collectorName"
-          placeholder="请输入采集器名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="采集器类型" prop="collectorType">
-        <el-input
-          v-model="queryParams.collectorType"
-          placeholder="请输入采集器类型"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="模块名称" prop="moduleName">
-        <el-select v-model="queryParams.moduleName" placeholder="请选择模块名称" clearable>
-          <el-option
-            v-for="dict in dict.type.collection_module"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="组名称" prop="dmaGroup">
-        <el-input
-          v-model="queryParams.dmaGroup"
-          placeholder="请输入组名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="主题" prop="dmaTopic">
-        <el-input
-          v-model="queryParams.dmaTopic"
-          placeholder="请输入主题"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
+    <el-row :gutter="24" style="height: 800px">
+      <splitpanes :horizontal="this.$store.getters.device === 'mobile'" class="default-theme">
+        <!--工厂模型/设备数据-->
+        <pane size="16">
+          <el-col>
+            <div class="head-container">
+              <el-input v-model="modelName" placeholder="请输入工厂/设备名称" clearable size="small" prefix-icon="el-icon-search"
+                style="margin-bottom: 20px" />
+            </div>
+            <div class="head-container">
+              <el-tree :data="modelOptions" :props="defaultProps" :expand-on-click-node="false"
+                :filter-node-method="filterNode" ref="tree" node-key="id" default-expand-all highlight-current
+                @node-click="handleNodeClick" />
+            </div>
+          </el-col>
+        </pane>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['collection:collectorInfo:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['collection:collectorInfo:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['collection:collectorInfo:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['collection:collectorInfo:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+        <!--采集器数据-->
+        <pane size="84">
+          <el-col>
+            <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch"
+              label-width="88px">
+              <el-form-item label="归属设备" prop="equipmentInfoId">
+              <treeselect style="width: 180px;" @select="handleQuery" @deselect="handleQuery" v-model="queryParams.equipmentInfoId" :options="modelOptions" :flat="true" :show-count="true" placeholder="请选择归属设备模型">
+                </treeselect>
+              </el-form-item>
+              <el-form-item label="采集器名称" prop="collectorName">
+                <el-input v-model="queryParams.collectorName" placeholder="请输入采集器名称" clearable
+                  @keyup.enter.native="handleQuery" />
+              </el-form-item>
+              <el-form-item label="采集器类型" prop="collectorType">
+                <el-input v-model="queryParams.collectorType" placeholder="请输入采集器类型" clearable
+                  @keyup.enter.native="handleQuery" />
+              </el-form-item>
+              <el-form-item label="模块名称" prop="moduleName">
+                <el-select v-model="queryParams.moduleName" placeholder="请选择模块名称" clearable>
+                  <el-option v-for="dict in dict.type.collection_module" :key="dict.value" :label="dict.label"
+                    :value="dict.value" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="组名称" prop="dmaGroup">
+                <el-input v-model="queryParams.dmaGroup" placeholder="请输入组名称" clearable
+                  @keyup.enter.native="handleQuery" />
+              </el-form-item>
+              <el-form-item label="主题" prop="dmaTopic">
+                <el-input v-model="queryParams.dmaTopic" placeholder="请输入主题" clearable
+                  @keyup.enter.native="handleQuery" />
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+                <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+              </el-form-item>
+            </el-form>
+
+            <el-row :gutter="10" class="mb8">
+              <el-col :span="1.5">
+                <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
+                  v-hasPermi="['collection:collectorInfo:add']">新增</el-button>
+              </el-col>
+              <el-col :span="1.5">
+                <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
+                  v-hasPermi="['collection:collectorInfo:edit']">修改</el-button>
+              </el-col>
+              <el-col :span="1.5">
+                <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple"
+                  @click="handleDelete" v-hasPermi="['collection:collectorInfo:remove']">删除</el-button>
+              </el-col>
+              <el-col :span="1.5">
+                <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
+                  v-hasPermi="['collection:collectorInfo:export']">导出</el-button>
+              </el-col>
+              <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+            </el-row>
+
+            <el-table v-loading="loading" :data="collectorInfoList" @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="55" align="center" />
+              <el-table-column label="ID" align="center" prop="collectorId" />
+              <el-table-column label="归属设备" align="center" prop="equipmentInfoName">
+                <template slot-scope="scope">
+                  <!-- 判断值是否为空，为空则显示未分配，否则显示对应的值 -->
+                  {{ scope.row.equipmentInfoName? scope.row.equipmentInfoName : '未分配' }}
+                </template>
+              </el-table-column>
+              <el-table-column label="采集器名称" align="center" prop="collectorName" />
+              <el-table-column label="采集器类型" align="center" prop="collectorType" />
+              <el-table-column label="详细描述" align="center" prop="description" />
+              <el-table-column label="模块名称" align="center" prop="moduleName">
+                <template slot-scope="scope">
+                  <dict-tag :options="dict.type.collection_module" :value="scope.row.moduleName" />
+                </template>
+              </el-table-column>
+              <el-table-column label="组名称" align="center" prop="dmaGroup" />
+              <el-table-column label="主题" align="center" prop="dmaTopic" />
+              <el-table-column label="限制接收数" align="center" prop="limitDataNum" />
+              <el-table-column label="有效数据点数量" align="center" prop="validDataNum" />
+              <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+                <template slot-scope="scope">
+                  <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
+                    v-hasPermi="['collection:collectorInfo:edit']">修改</el-button>
+                  <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+                    v-hasPermi="['collection:collectorInfo:remove']">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum"
+              :limit.sync="queryParams.pageSize" @pagination="getList" />
+          </el-col>
+        </pane>
+      </splitpanes>
     </el-row>
 
-    <el-table v-loading="loading" :data="collectorInfoList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="collectorId" />
-      <el-table-column label="采集器名称" align="center" prop="collectorName" />
-      <el-table-column label="采集器类型" align="center" prop="collectorType" />
-      <el-table-column label="详细描述" align="center" prop="description" />
-      <el-table-column label="模块名称" align="center" prop="moduleName">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.collection_module" :value="scope.row.moduleName"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="组名称" align="center" prop="dmaGroup" />
-      <el-table-column label="主题" align="center" prop="dmaTopic" />
-      <el-table-column label="限制接收数" align="center" prop="limitDataNum"/>
-      <el-table-column label="有效数据点数量" align="center" prop="validDataNum" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['collection:collectorInfo:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['collection:collectorInfo:remove']"
-          >删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
-
-    <!-- 添加或修改采集器基本信息：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="采集器名称" prop="collectorName">
-          <el-input v-model="form.collectorName" placeholder="请输入采集器名称" />
-        </el-form-item>
-        <el-form-item label="采集器类型" prop="collectorType">
-          <el-input v-model="form.collectorType" placeholder="请输入采集器类型" />
-        </el-form-item>
-        <el-form-item label="详细描述" prop="description">
-          <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="模块名称" prop="moduleName">
-          <el-select v-model="form.moduleName" placeholder="请选择模块名称">
-            <el-option
-              v-for="dict in dict.type.collection_module"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="组名称" prop="dmaGroup">
-          <el-input v-model="form.dmaGroup" placeholder="请输入组名称" />
-        </el-form-item>
-        <el-form-item label="主题" prop="dmaTopic">
-          <el-input v-model="form.dmaTopic" placeholder="请输入主题" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
+      <!-- 添加或修改采集器基本信息：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等对话框 -->
+      <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+        <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+          <el-form-item label="归属设备" prop="equipmentInfoId">
+            <treeselect @select="handleEquipmentSelect" @deselect="handleEquipmentDsselect" v-model="form.equipmentInfoId" :options="modelOptions" :flat="true" :show-count="true" placeholder="请选择归属设备模型">
+            </treeselect>
+          </el-form-item>
+          <el-form-item label="采集器名称" prop="collectorName">
+            <el-input v-model="form.collectorName" placeholder="请输入采集器名称" />
+          </el-form-item>
+          <el-form-item label="采集器类型" prop="collectorType">
+            <el-input v-model="form.collectorType" placeholder="请输入采集器类型" />
+          </el-form-item>
+          <el-form-item label="详细描述" prop="description">
+            <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
+          </el-form-item>
+          <el-form-item label="模块名称" prop="moduleName">
+            <el-select v-model="form.moduleName" placeholder="请选择模块名称">
+              <el-option v-for="dict in dict.type.collection_module" :key="dict.value" :label="dict.label"
+                :value="dict.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="组名称" prop="dmaGroup">
+            <el-input v-model="form.dmaGroup" placeholder="请输入组名称" />
+          </el-form-item>
+          <el-form-item label="主题" prop="dmaTopic">
+            <el-input v-model="form.dmaTopic" placeholder="请输入主题" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </div>
+      </el-dialog>
   </div>
 </template>
 
 <script>
-import { listCollectorInfo, getCollectorInfo, delCollectorInfo, addCollectorInfo, updateCollectorInfo } from "@/api/collection/collectorInfo";
+import { listCollectorInfo, getCollectorInfo, delCollectorInfo, addCollectorInfo, updateCollectorInfo, modelTreeSelect } from "@/api/collection/collectorInfo";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { Splitpanes, Pane } from "splitpanes";
+import "splitpanes/dist/splitpanes.css";
 
 export default {
   name: "CollectorInfo",
   dicts: ['collection_module'],
+  components: { Treeselect, Splitpanes, Pane },
   data() {
     return {
       // 遮罩层
@@ -201,10 +180,20 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 工厂模型名称
+      modelName: undefined,
+      // 工厂模型树选项
+      modelOptions: undefined,
+      defaultProps: {
+        children: "children",
+        label: "label"
+      },
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        equipmentInfoId: null,
+        equipmentInfoName: null,
         collectorName: null,
         collectorType: null,
         description: null,
@@ -231,8 +220,15 @@ export default {
       }
     };
   },
+  watch: {
+    // 根据名称筛选部门树
+    modelName(val) {
+      this.$refs.tree.filter(val);
+    }
+  },
   created() {
     this.getList();
+    this.getFactoryModelTree()
   },
   methods: {
     /** 查询采集器基本信息：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等列表 */
@@ -262,7 +258,9 @@ export default {
         createBy: null,
         createTime: null,
         updateBy: null,
-        updateTime: null
+        updateTime: null,
+        equipmentInfoId: null,
+        equipmentInfoName: null
       };
       this.resetForm("form");
     },
@@ -279,7 +277,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.collectorId)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -321,18 +319,43 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const collectorIds = row.collectorId || this.ids;
-      this.$modal.confirm('是否确认删除采集器基本信息：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等编号为"' + collectorIds + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除采集器基本信息：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等编号为"' + collectorIds + '"的数据项？').then(function () {
         return delCollectorInfo(collectorIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => { });
     },
     /** 导出按钮操作 */
     handleExport() {
       this.download('collection/collectorInfo/export', {
         ...this.queryParams
       }, `collectorInfo_${new Date().getTime()}.xlsx`)
+    },
+    /** 查询工厂模型下拉树结构 */
+    getFactoryModelTree() {
+      modelTreeSelect().then(response => {
+        this.modelOptions = response.data;
+      });
+    },
+    // 筛选节点
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
+    // 节点单击事件
+    handleNodeClick(data) {
+      if(!data.isClick){
+        return
+      }
+      this.queryParams.equipmentInfoId = data.id
+      this.handleQuery();
+    },
+    handleEquipmentSelect(item){
+      this.form.equipmentInfoName = item.label;
+    },
+    handleEquipmentDsselect(item){
+      this.form.equipmentInfoName = null;
     }
   }
 };

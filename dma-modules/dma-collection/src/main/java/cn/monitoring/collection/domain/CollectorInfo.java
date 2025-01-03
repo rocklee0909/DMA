@@ -20,6 +20,13 @@ public class CollectorInfo extends BaseEntity
     /** ID */
     private Long collectorId;
 
+    /** 设备信息ID */
+    private String equipmentInfoId;
+
+    /** 设备信息名称 */
+    @Excel(name = "归属设备名称")
+    private String equipmentInfoName;
+
     /** 采集器名称 */
     @Excel(name = "采集器名称")
     private String collectorName;

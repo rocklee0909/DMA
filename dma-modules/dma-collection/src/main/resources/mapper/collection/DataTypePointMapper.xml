@@ -5,8 +5,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="cn.monitoring.collection.mapper.DataTypePointMapper">
     
     <resultMap type="DataTypePoint" id="DataTypePointResult">
-        <result property="typeId"    column="type_id"    />
         <result property="pointId"    column="point_id"    />
+        <result property="collectorId"    column="collector_id"    />
+        <result property="dmaTopic"    column="dma_topic"    />
+        <result property="tableName"    column="table_name"    />
+        <result property="pointName"    column="point_name"    />
+        <result property="pointCode"    column="point_code"    />
+        <result property="description"    column="description"    />
+        <result property="dataType"    column="data_type"    />
+        <result property="unit"    column="unit"    />
+        <result property="isActive"    column="is_active"    />
+
+        <result property="dataTypeId"    column="data_type_id"    />
+        <result property="dataPointId"    column="data_point_id"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -14,12 +25,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectDataTypePointVo">
-        select type_id, point_id, create_by, create_time, update_by, update_time from data_type_point
+        select p.point_id, p.collector_id, p.dma_topic, p.table_name, p.point_name, p.point_code, p.description, p.data_type, p.unit, p.is_active,tp.type_id data_type_id, tp.point_id data_point_id, tp.create_by, tp.create_time, tp.update_by, tp.update_time from data_point p
+        left join data_type_point tp on p.point_id = tp.point_id
+        left join data_type t on tp.type_id = t.type_id
     </sql>
 
     <select id="selectDataTypePointList" parameterType="DataTypePoint" resultMap="DataTypePointResult">
         <include refid="selectDataTypePointVo"/>
-        <where>  
+        <where>
+            <if test="collectorId != null "> and p.collector_id = #{collectorId}</if>
+            <if test="dmaTopic != null  and dmaTopic != ''"> and p.dma_topic = #{dmaTopic}</if>
+            <if test="tableName != null  and tableName != ''"> and p.table_name like concat('%', #{tableName}, '%')</if>
+            <if test="pointName != null  and pointName != ''"> and p.point_name like concat('%', #{pointName}, '%')</if>
+            <if test="pointCode != null  and pointCode != ''"> and p.point_code = #{pointCode}</if>
+            <if test="description != null  and description != ''"> and p.description = #{description}</if>
+            <if test="dataType != null  and dataType != ''"> and p.data_type = #{dataType}</if>
+            <if test="unit != null  and unit != ''"> and p.unit = #{unit}</if>
+            <if test="isActive != null "> and p.is_active = #{isActive}</if>
+            <if test="dataTypeId != null "> and tp.type_id = #{dataTypeId}</if>
+            <if test="dataPointId != null "> and tp.point_id = #{dataPointId}</if>
         </where>
     </select>
     
@@ -68,6 +92,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from data_type_point where type_id in 
         <foreach item="typeId" collection="array" open="(" separator="," close=")">
             #{typeId}
+        </foreach>
+    </delete>
+
+    <!-- 自定义内容 -->
+    <select id="countByTypeId" parameterType="Long" resultType="Integer">
+        select count(*) from data_type_point where type_id = #{typeId}
+    </select>
+
+    <delete id="deleteDataTypePointByPointIds" parameterType="String">
+        delete from data_type_point where point_id in
+        <foreach item="pointId" collection="array" open="(" separator="," close=")">
+            #{pointId}
         </foreach>
     </delete>
 </mapper>

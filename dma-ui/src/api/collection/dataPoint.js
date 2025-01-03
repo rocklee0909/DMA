@@ -35,6 +35,15 @@ export function updateDataPoint(data) {
   })
 }
 
+// 修改数据点位配置
+export function moveDataPoint(data) {
+  return request({
+    url: '/collection/dataPoint/move',
+    method: 'put',
+    data: data
+  })
+}
+
 // 删除数据点位配置
 export function delDataPoint(pointId) {
   return request({

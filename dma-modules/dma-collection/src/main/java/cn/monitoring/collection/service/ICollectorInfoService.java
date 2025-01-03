@@ -2,6 +2,7 @@ package cn.monitoring.collection.service;
 
 import java.util.List;
 import cn.monitoring.collection.domain.CollectorInfo;
+import cn.monitoring.collection.domain.DataPoint;
 import cn.monitoring.collection.domain.vo.TreeSelect;
 
 /**
@@ -74,9 +75,24 @@ public interface ICollectorInfoService
     List<CollectorInfo> selectCollectorInfoByDmaTopic(String topic);
 
     /**
+     * 根据主题和组查询采集器信息
+     * @param topic
+     * @param groupId
+     * @return
+     */
+    List<CollectorInfo> selectCollectorInfoByDmaTopicAndDmaGroup(String topic, String groupId);
+
+    /**
      * 查询采集器树结构
      * @param collectorInfo
      * @return
      */
     List<TreeSelect> selectCollectorTreeList(CollectorInfo collectorInfo);
+
+    /**
+     * 校验采集器ID、主题、数据点位编码是否唯一
+     * @param dataPoint
+     * @return
+     */
+    boolean checkCollectorIdAndTopicAndPointCodeUnique(DataPoint dataPoint);
 }

@@ -1,11 +1,14 @@
 package cn.monitoring.factory.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import cn.monitoring.factory.domain.FactoryModel;
 import cn.monitoring.factory.domain.vo.EquipmentVo;
 import cn.monitoring.factory.service.IFactoryModelService;
+import cn.monitoring.process.domain.vo.TreeGroupSelect;
+import cn.monitoring.system.domain.vo.TreeSelect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +38,8 @@ import cn.monitoring.common.core.web.page.TableDataInfo;
 @RequestMapping("/equipmentInfo")
 public class EquipmentInfoController extends BaseController
 {
+    private static final String TREE_FACTORY = "factory_";
+
     @Autowired
     private IEquipmentInfoService equipmentInfoService;
 
@@ -118,5 +123,52 @@ public class EquipmentInfoController extends BaseController
     {
         return success(factoryModelService.selectModelTreeList(factoryModel));
     }
+
+
+    /**
+     * 获取工厂模型树列表
+     */
+    @RequiresPermissions("system:equipmentInfo:list")
+    @GetMapping("/factoryEquipmentInfoModelTree")
+    public AjaxResult factoryEquipmentInfoModelTree(FactoryModel factoryModel)
+    {
+        List<TreeSelect> treeSelects = factoryModelService.selectModelTreeList(factoryModel);
+        return success(convertTreeGroupSelect(treeSelects));
+    }
+
+    public List<TreeGroupSelect> convertTreeGroupSelect(List<TreeSelect> treeSelects){
+        List<TreeGroupSelect> treeGroupSelects = new ArrayList<>();
+
+        for(TreeSelect treeSelect:treeSelects){
+            TreeGroupSelect treeGroupSelect = new TreeGroupSelect();
+            treeGroupSelect.setId(TREE_FACTORY+treeSelect.getId());
+            treeGroupSelect.setLabel(treeSelect.getLabel());
+            treeGroupSelect.setIsClick(false);
+            treeGroupSelect.setIsDisabled(true);
+
+            List<TreeGroupSelect> childrenTreeGroupSelects = new ArrayList<>();
+            if(treeSelect.getChildren()!=null&&treeSelect.getChildren().size()>0){
+                childrenTreeGroupSelects =convertTreeGroupSelect(treeSelect.getChildren());
+            }
+
+            //加载设备信息到树节点
+            List<EquipmentInfo> equipmentInfos = equipmentInfoService.selectEquipmentInfoList(new EquipmentInfo(treeSelect.getId()));
+            for(EquipmentInfo equipmentInfo:equipmentInfos){
+                TreeGroupSelect equipmentTreeGroupSelect = new TreeGroupSelect();
+                equipmentTreeGroupSelect.setId(equipmentInfo.getEquipmentInfoId().toString());
+                equipmentTreeGroupSelect.setLabel(equipmentInfo.getEquipmentName());
+                equipmentTreeGroupSelect.setCode(equipmentInfo.getEquipmentCode());
+                equipmentTreeGroupSelect.setIsClick(true);
+                equipmentTreeGroupSelect.setIsDisabled(false);
+                childrenTreeGroupSelects.add(equipmentTreeGroupSelect);
+            }
+
+            treeGroupSelect.setChildren(childrenTreeGroupSelects);
+            treeGroupSelects.add(treeGroupSelect);
+        }
+
+        return treeGroupSelects;
+    }
+
 
 }

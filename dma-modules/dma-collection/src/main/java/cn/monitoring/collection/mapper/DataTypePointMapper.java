@@ -58,4 +58,18 @@ public interface DataTypePointMapper
      * @return 结果
      */
     public int deleteDataTypePointByTypeIds(Long[] typeIds);
+
+    /**
+     * 查询类型关联的点位数量
+     * @param typeId 类型id
+     * @return
+     */
+    Integer countByTypeId(Long typeId);
+
+    /**
+     * 删除数据点位关联类型信息
+     * @param pointIds
+     * @return
+     */
+    int deleteDataTypePointByPointIds(Long[] pointIds);
 }

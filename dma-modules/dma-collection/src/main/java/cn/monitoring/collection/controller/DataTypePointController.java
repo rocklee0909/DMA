@@ -3,6 +3,7 @@ package cn.monitoring.collection.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import cn.monitoring.collection.domain.CollectorInfo;
+import cn.monitoring.collection.domain.vo.DataTypePointVo;
 import cn.monitoring.collection.service.ICollectorInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -79,9 +80,14 @@ public class DataTypePointController extends BaseController
     @RequiresPermissions("collection:dataTypePoint:add")
     @Log(title = "数据类型点位关联", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody DataTypePoint dataTypePoint)
+    public AjaxResult add(@RequestBody DataTypePointVo dataTypePointVo)
     {
-        return toAjax(dataTypePointService.insertDataTypePoint(dataTypePoint));
+        if(dataTypePointVo.getTypeIds()==null){
+            return error("请选择类型");
+        }else if(dataTypePointVo.getPointIds()==null){
+            return error("请选中分配类型点位");
+        }
+        return toAjax(dataTypePointService.insertDataTypePoint(dataTypePointVo));
     }
 
     /**
@@ -114,5 +120,16 @@ public class DataTypePointController extends BaseController
     public AjaxResult collectorTree(CollectorInfo collectorInfo)
     {
         return success(collectorInfoService.selectCollectorTreeList(collectorInfo));
+    }
+
+    /**
+     * 清除数据点位关联
+     */
+    @RequiresPermissions("collection:dataTypePoint:remove")
+    @Log(title = "清除数据点位关联", businessType = BusinessType.DELETE)
+    @DeleteMapping("/clear/{pointIds}")
+    public AjaxResult clear(@PathVariable Long[] pointIds)
+    {
+        return toAjax(dataTypePointService.deleteDataTypePointByPointIds(pointIds));
     }
 }

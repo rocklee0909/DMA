@@ -78,6 +78,10 @@ public class CollectorInfoController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody CollectorInfo collectorInfo)
     {
+        if(collectorInfo.getEquipmentInfoId()==null){
+            collectorInfo.setEquipmentInfoName("");
+        }
+
         return toAjax(collectorInfoService.insertCollectorInfo(collectorInfo));
     }
 
@@ -89,6 +93,10 @@ public class CollectorInfoController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody CollectorInfo collectorInfo)
     {
+        if(collectorInfo.getEquipmentInfoId()==null){
+            collectorInfo.setEquipmentInfoName("");
+        }
+
         return toAjax(collectorInfoService.updateCollectorInfo(collectorInfo));
     }
 

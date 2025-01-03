@@ -1,4 +1,4 @@
-package cn.monitoring.system.domain.vo;
+package cn.monitoring.process.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -19,6 +19,8 @@ public class TreeGroupSelect implements Serializable
     private String id;
     /** 节点名称 */
     private String label;
+    /** 节点编码 */
+    private String code;
 
     private Boolean isClick = false;
 

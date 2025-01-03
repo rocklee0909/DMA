@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import cn.monitoring.collection.domain.CollectorInfo;
 import cn.monitoring.collection.service.ICollectorInfoService;
+import cn.monitoring.collection.utils.DmaCollectionUtil;
 import cn.monitoring.system.api.domain.SysDept;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,11 +86,41 @@ public class DataPointController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody DataPoint dataPoint)
     {
+
+        if (!collectorInfoService.checkCollectorIdAndTopicAndPointCodeUnique(dataPoint))
+        {
+            return error("新增数据点'" + dataPoint.getPointCode() + "'失败，数据点已存在");
+        }
+
         if(dataPoint.getCollectorId()!=null){
             CollectorInfo collectorInfo = collectorInfoService.selectCollectorInfoByCollectorId(dataPoint.getCollectorId());
             dataPoint.setDmaTopic(collectorInfo.getDmaTopic());
+            String tableName = DmaCollectionUtil.generateTableName(collectorInfo.getModuleName());
+            dataPoint.setTableName(tableName);
         }
         return toAjax(dataPointService.insertDataPoint(dataPoint));
+    }
+
+    /**
+     * 修改数据点位配置
+     */
+    @RequiresPermissions("collection:dataPoint:edit")
+    @Log(title = "移动数据点位配置", businessType = BusinessType.UPDATE)
+    @PutMapping("/move")
+    public AjaxResult move(@RequestBody DataPoint dataPoint)
+    {
+        if (!collectorInfoService.checkCollectorIdAndTopicAndPointCodeUnique(dataPoint))
+        {
+            return error("移动数据点'" + dataPoint.getPointCode() + "'失败，目标采集器数据点已存在");
+        }
+
+        if(dataPoint.getCollectorId()!=null){
+            CollectorInfo collectorInfo = collectorInfoService.selectCollectorInfoByCollectorId(dataPoint.getCollectorId());
+            dataPoint.setDmaTopic(collectorInfo.getDmaTopic());
+            String tableName = DmaCollectionUtil.generateTableName(collectorInfo.getModuleName());
+            dataPoint.setTableName(tableName);
+        }
+        return toAjax(dataPointService.updateDataPoint(dataPoint));
     }
 
     /**
@@ -103,6 +134,8 @@ public class DataPointController extends BaseController
         if(dataPoint.getCollectorId()!=null){
             CollectorInfo collectorInfo = collectorInfoService.selectCollectorInfoByCollectorId(dataPoint.getCollectorId());
             dataPoint.setDmaTopic(collectorInfo.getDmaTopic());
+            String tableName = DmaCollectionUtil.generateTableName(collectorInfo.getModuleName());
+            dataPoint.setTableName(tableName);
         }
         return toAjax(dataPointService.updateDataPoint(dataPoint));
     }

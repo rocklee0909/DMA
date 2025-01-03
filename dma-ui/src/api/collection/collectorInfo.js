@@ -42,3 +42,11 @@ export function delCollectorInfo(collectorId) {
     method: 'delete'
   })
 }
+
+// 查询工厂/设备模型下拉树结构
+export function modelTreeSelect() {
+  return request({
+    url: '/system/equipmentInfo/factoryEquipmentInfoModelTree',
+    method: 'get'
+  })
+}

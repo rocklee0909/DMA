@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.monitoring.collection.mapper.DataPretreatmentConfigMapper">
+    
+    <resultMap type="DataPretreatmentConfig" id="DataPretreatmentConfigResult">
+        <result property="pretreatmentId"    column="pretreatment_id"    />
+        <result property="factoryModelId"    column="factory_model_id"    />
+        <result property="pretreatmentName"    column="pretreatment_name"    />
+        <result property="pointId"    column="point_id"    />
+        <result property="targetDataPointName"    column="target_data_point_name"    />
+        <result property="targetDataPointCode"    column="target_data_point_code"    />
+        <result property="pretreatmentMethod"    column="pretreatment_method"    />
+        <result property="handleTime"    column="handle_time"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectDataPretreatmentConfigVo">
+        select pretreatment_id, factory_model_id, pretreatment_name, point_id, target_data_point_name, target_data_point_code, pretreatment_method, handle_time, del_flag, create_by, create_time, update_by, update_time from data_pretreatment_config
+    </sql>
+
+    <select id="selectDataPretreatmentConfigList" parameterType="DataPretreatmentConfig" resultMap="DataPretreatmentConfigResult">
+        <include refid="selectDataPretreatmentConfigVo"/>
+        <where>  
+            <if test="factoryModelId != null "> and factory_model_id = #{factoryModelId}</if>
+            <if test="pretreatmentName != null  and pretreatmentName != ''"> and pretreatment_name like concat('%', #{pretreatmentName}, '%')</if>
+            <if test="targetDataPointName != null  and targetDataPointName != ''"> and target_data_point_name like concat('%', #{targetDataPointName}, '%')</if>
+            <if test="targetDataPointCode != null  and targetDataPointCode != ''"> and target_data_point_code = #{targetDataPointCode}</if>
+            <if test="pretreatmentMethod != null "> and pretreatment_method = #{pretreatmentMethod}</if>
+            <if test="handleTime != null "> and handle_time = #{handleTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectDataPretreatmentConfigByPretreatmentId" parameterType="Long" resultMap="DataPretreatmentConfigResult">
+        <include refid="selectDataPretreatmentConfigVo"/>
+        where pretreatment_id = #{pretreatmentId}
+    </select>
+
+    <insert id="insertDataPretreatmentConfig" parameterType="DataPretreatmentConfig" useGeneratedKeys="true" keyProperty="pretreatmentId">
+        insert into data_pretreatment_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="factoryModelId != null">factory_model_id,</if>
+            <if test="pretreatmentName != null">pretreatment_name,</if>
+            <if test="pointId != null">point_id,</if>
+            <if test="targetDataPointName != null">target_data_point_name,</if>
+            <if test="targetDataPointCode != null">target_data_point_code,</if>
+            <if test="pretreatmentMethod != null">pretreatment_method,</if>
+            <if test="handleTime != null">handle_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="factoryModelId != null">#{factoryModelId},</if>
+            <if test="pretreatmentName != null">#{pretreatmentName},</if>
+            <if test="pointId != null">#{pointId},</if>
+            <if test="targetDataPointName != null">#{targetDataPointName},</if>
+            <if test="targetDataPointCode != null">#{targetDataPointCode},</if>
+            <if test="pretreatmentMethod != null">#{pretreatmentMethod},</if>
+            <if test="handleTime != null">#{handleTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDataPretreatmentConfig" parameterType="DataPretreatmentConfig">
+        update data_pretreatment_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="factoryModelId != null">factory_model_id = #{factoryModelId},</if>
+            <if test="pretreatmentName != null">pretreatment_name = #{pretreatmentName},</if>
+            <if test="pointId != null">point_id = #{pointId},</if>
+            <if test="targetDataPointName != null">target_data_point_name = #{targetDataPointName},</if>
+            <if test="targetDataPointCode != null">target_data_point_code = #{targetDataPointCode},</if>
+            <if test="pretreatmentMethod != null">pretreatment_method = #{pretreatmentMethod},</if>
+            <if test="handleTime != null">handle_time = #{handleTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where pretreatment_id = #{pretreatmentId}
+    </update>
+
+    <delete id="deleteDataPretreatmentConfigByPretreatmentId" parameterType="Long">
+        delete from data_pretreatment_config where pretreatment_id = #{pretreatmentId}
+    </delete>
+
+    <delete id="deleteDataPretreatmentConfigByPretreatmentIds" parameterType="String">
+        delete from data_pretreatment_config where pretreatment_id in 
+        <foreach item="pretreatmentId" collection="array" open="(" separator="," close=")">
+            #{pretreatmentId}
+        </foreach>
+    </delete>
+</mapper>

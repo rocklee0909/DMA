@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cn.monitoring.collection.domain.DataPoint;
 import cn.monitoring.collection.domain.vo.TreeSelect;
 import cn.monitoring.collection.jobs.CollectorInfoDataReceiveJob;
 import cn.monitoring.collection.jobs.DmaKafkaCollectorDataJob;
@@ -166,9 +167,19 @@ public class CollectorInfoServiceImpl implements ICollectorInfoService
     }
 
     @Override
+    public List<CollectorInfo> selectCollectorInfoByDmaTopicAndDmaGroup(String topic, String groupId) {
+        return collectorInfoMapper.selectCollectorInfoByDmaTopicAndDmaGroup(topic,groupId);
+    }
+
+    @Override
     public List<TreeSelect> selectCollectorTreeList(CollectorInfo collectorInfo) {
         List<CollectorInfo> collectorInfos = selectCollectorInfoList(collectorInfo);
         return buildCollectorInfoTreeSelect(collectorInfos);
+    }
+
+    @Override
+    public boolean checkCollectorIdAndTopicAndPointCodeUnique(DataPoint dataPoint) {
+        return collectorInfoMapper.checkCollectorIdAndTopicAndPointCodeUnique(dataPoint)>0;
     }
 
     private List<TreeSelect> buildCollectorInfoTreeSelect(List<CollectorInfo> collectorInfos) {

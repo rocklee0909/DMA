@@ -1,5 +1,9 @@
 package cn.monitoring.collection.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import cn.monitoring.common.core.annotation.Excel;
@@ -11,44 +15,18 @@ import cn.monitoring.common.core.web.domain.BaseEntity;
  * @author liru
  * @date 2024-12-31
  */
-public class DataTypePoint extends BaseEntity
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class DataTypePoint extends DataPoint
 {
     private static final long serialVersionUID = 1L;
 
     /** 类型ID */
-    private Long typeId;
+    private Long dataTypeId;
 
     /** 点位ID */
-    private Long pointId;
+    private Long dataPointId;
 
-    public void setTypeId(Long typeId) 
-    {
-        this.typeId = typeId;
-    }
-
-    public Long getTypeId() 
-    {
-        return typeId;
-    }
-    public void setPointId(Long pointId) 
-    {
-        this.pointId = pointId;
-    }
-
-    public Long getPointId() 
-    {
-        return pointId;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("typeId", getTypeId())
-            .append("pointId", getPointId())
-            .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .toString();
-    }
 }

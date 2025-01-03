@@ -51,3 +51,11 @@ export function collectorTreeSelect(){
   })
 }
 
+
+// 清除数据点关联类型
+export function clearDataTypePoint(pointId) {
+  return request({
+    url: '/collection/dataTypePoint/clear/' + pointId,
+    method: 'delete'
+  })
+}

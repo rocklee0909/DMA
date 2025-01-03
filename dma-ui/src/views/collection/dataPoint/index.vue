@@ -101,6 +101,10 @@
               </el-table-column>
               <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
                 <template slot-scope="scope">
+                  <el-button size="mini" type="text" icon="el-icon-edit" @click="handleMove(scope.row)"
+                    v-hasPermi="['collection:dataPoint:edit']">移动</el-button>
+                  <el-button size="mini" type="text" icon="el-icon-edit" @click="handleCopy(scope.row)"
+                    v-hasPermi="['collection:dataPoint:edit']">复制</el-button>
                   <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
                     v-hasPermi="['collection:dataPoint:edit']">修改</el-button>
                   <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
@@ -156,11 +160,45 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 添加或修改数据点位配置对话框 -->
+    <el-dialog :title="title" :visible.sync="moveOpen" width="1000px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="140px">
+        <el-form-item label="移动到采集器" prop="collectorId">
+          <treeselect v-model="form.collectorId" :options="collectorOptions" :show-count="true" placeholder="请选择需要移动到采集器..." />
+        </el-form-item>
+        <el-form-item label="数据点名称" prop="pointName">
+          {{ form.pointName }}
+        </el-form-item>
+        <el-form-item label="数据点位编码" prop="pointCode">
+          {{ form.pointCode }}
+        </el-form-item>
+        <el-form-item label="数据点位详细描述" prop="description">
+          {{ form.description }}
+        </el-form-item>
+        <el-form-item label="数据类型" prop="dataType">
+          {{ dict.value }}
+        </el-form-item>
+        <el-form-item label="数据单位" prop="unit">
+          {{form.unit}}
+        </el-form-item>
+        <el-form-item label="激活状态" prop="isActive">
+          {{ form.isActive }}
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
+
+
   </div>
 </template>
 
 <script>
-import { listDataPoint, getDataPoint, delDataPoint, addDataPoint, updateDataPoint, collectorTreeSelect } from "@/api/collection/dataPoint";
+import { listDataPoint, getDataPoint, delDataPoint, addDataPoint, updateDataPoint,moveDataPoint, collectorTreeSelect } from "@/api/collection/dataPoint";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { Splitpanes, Pane } from "splitpanes";
@@ -198,6 +236,8 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 是否显示移动弹出层
+      moveOpen: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -224,12 +264,7 @@ export default {
           { required: true, message: "数据点编号不能为空", trigger: "blur" },
           {
             validator: (rule, value, callback) => {
-              // 检查是否为纯数字
-              if (/^\d+$/.test(value)) {
-                callback(new Error('Point Code cannot be all numbers'));
-              } else if (/^\d/.test(value)) {
-                callback(new Error('Point Code cannot start with a number'));
-              } else if (/[^a-zA-Z0-9]/.test(value)) {
+              if (/[^a-zA-Z0-9]/.test(value)) {
                 callback(new Error('Point Code cannot contain special characters'));
               } else {
                 callback();
@@ -322,6 +357,25 @@ export default {
       this.open = true;
       this.title = "添加数据点位配置";
     },
+    handleMove(row){
+      this.reset();
+      const pointId = row.pointId || this.ids
+      getDataPoint(pointId).then(response => {
+        this.form = response.data;
+        this.moveOpen = true;
+        this.title = "移动数据点位配置";
+      });
+    },
+    handleCopy(row){
+      this.reset();
+      const pointId = row.pointId || this.ids
+      getDataPoint(pointId).then(response => {
+        this.form = response.data;
+        this.form.pointId = null;
+        this.open = true;
+        this.title = "复制数据点位配置";
+      });
+    },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
@@ -337,17 +391,25 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.pointId != null) {
-            updateDataPoint(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
+          if(moveOpen){
+            if (this.form.pointId != null) {
+              updateDataPoint(this.form).then(response => {
+                this.$modal.msgSuccess("修改成功");
+                this.open = false;
+                this.getList();
+              });
+            } else {
+              addDataPoint(this.form).then(response => {
+                this.$modal.msgSuccess("新增成功");
+                this.open = false;
+                this.getList();
+              });
+            }
           } else {
-            addDataPoint(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
+            moveDataPoint(this.form).then(response => {
+                this.$modal.msgSuccess("移动成功");
+                this.moveOpen = false;
+                this.getList();
             });
           }
         }

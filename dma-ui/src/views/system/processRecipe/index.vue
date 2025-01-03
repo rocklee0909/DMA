@@ -173,7 +173,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="归属设备模型" prop="factoryModelId">
-              <treeselect v-model="form.equipmentInfoId" :options="modelOptions" :flat="true" :show-count="true" placeholder="请选择归属设备模型">
+              <treeselect v-model="form.equipmentInfoId" :options="modelOptions" :flat="true" :show-count="true" placeholder="请选择归属设备">
               </treeselect>
             </el-form-item>
           </el-col>
@@ -329,6 +329,12 @@ export default {
       }
     };
   },
+  watch: {
+    // 根据名称筛选部门树
+    modelName(val) {
+      this.$refs.tree.filter(val);
+    }
+  },
   created() {
     this.getList()
     this.getFactoryModelTree()
@@ -455,7 +461,6 @@ export default {
     /** 查询工厂模型下拉树结构 */
     getFactoryModelTree() {
       modelTreeSelect().then(response => {
-        console.log(response.data)
         this.modelOptions = response.data;
       });
     },
