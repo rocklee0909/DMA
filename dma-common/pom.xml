@@ -20,6 +20,7 @@
         <module>dma-common-datasource</module>
         <module>dma-common-kafka</module>
         <module>dma-common-flink</module>
+        <module>dma-common-data</module>
     </modules>
 
     <artifactId>dma-common</artifactId>

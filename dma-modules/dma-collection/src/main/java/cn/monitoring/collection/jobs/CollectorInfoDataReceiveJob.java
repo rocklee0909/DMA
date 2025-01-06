@@ -1,7 +1,5 @@
 package cn.monitoring.collection.jobs;
 
-import cn.hutool.json.JSON;
-import cn.hutool.json.JSONUtil;
 import cn.monitoring.collection.domain.CollectorInfo;
 import cn.monitoring.collection.protocol.IProtocolHandler;
 import cn.monitoring.collection.service.ICollectorInfoService;

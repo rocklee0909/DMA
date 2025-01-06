@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询告警配置列表
 export function listDataAlarmConfig(query) {
   return request({
-    url: '/collection/dataAlarmConfig/list',
+    url: '/system/dataAlarmConfig/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listDataAlarmConfig(query) {
 // 查询告警配置详细
 export function getDataAlarmConfig(alertId) {
   return request({
-    url: '/collection/dataAlarmConfig/' + alertId,
+    url: '/system/dataAlarmConfig/' + alertId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getDataAlarmConfig(alertId) {
 // 新增告警配置
 export function addDataAlarmConfig(data) {
   return request({
-    url: '/collection/dataAlarmConfig',
+    url: '/system/dataAlarmConfig',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addDataAlarmConfig(data) {
 // 修改告警配置
 export function updateDataAlarmConfig(data) {
   return request({
-    url: '/collection/dataAlarmConfig',
+    url: '/system/dataAlarmConfig',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateDataAlarmConfig(data) {
 // 删除告警配置
 export function delDataAlarmConfig(alertId) {
   return request({
-    url: '/collection/dataAlarmConfig/' + alertId,
+    url: '/system/dataAlarmConfig/' + alertId,
     method: 'delete'
   })
 }

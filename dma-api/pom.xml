@@ -10,6 +10,7 @@
 
     <modules>
         <module>dma-api-system</module>
+        <module>dma-api-collection</module>
     </modules>
 
     <artifactId>dma-api</artifactId>

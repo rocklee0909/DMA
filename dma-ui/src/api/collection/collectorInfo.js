@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询采集器基本信息：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等列表
 export function listCollectorInfo(query) {
   return request({
-    url: '/collection/collectorInfo/list',
+    url: '/system/collectorInfo/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listCollectorInfo(query) {
 // 查询采集器基本信息：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等详细
 export function getCollectorInfo(collectorId) {
   return request({
-    url: '/collection/collectorInfo/' + collectorId,
+    url: '/system/collectorInfo/' + collectorId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getCollectorInfo(collectorId) {
 // 新增采集器基本信息：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等
 export function addCollectorInfo(data) {
   return request({
-    url: '/collection/collectorInfo',
+    url: '/system/collectorInfo',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addCollectorInfo(data) {
 // 修改采集器基本信息：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等
 export function updateCollectorInfo(data) {
   return request({
-    url: '/collection/collectorInfo',
+    url: '/system/collectorInfo',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateCollectorInfo(data) {
 // 删除采集器基本信息：用于存储生产数据采集器的基础信息，如名称、类型、创建与更新时间等
 export function delCollectorInfo(collectorId) {
   return request({
-    url: '/collection/collectorInfo/' + collectorId,
+    url: '/system/collectorInfo/' + collectorId,
     method: 'delete'
   })
 }

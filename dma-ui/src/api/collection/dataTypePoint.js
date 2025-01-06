@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询数据类型点位关联列表
 export function listDataTypePoint(query) {
   return request({
-    url: '/collection/dataTypePoint/list',
+    url: '/system/dataTypePoint/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listDataTypePoint(query) {
 // 查询数据类型点位关联详细
 export function getDataTypePoint(typeId) {
   return request({
-    url: '/collection/dataTypePoint/' + typeId,
+    url: '/system/dataTypePoint/' + typeId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getDataTypePoint(typeId) {
 // 新增数据类型点位关联
 export function addDataTypePoint(data) {
   return request({
-    url: '/collection/dataTypePoint',
+    url: '/system/dataTypePoint',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addDataTypePoint(data) {
 // 修改数据类型点位关联
 export function updateDataTypePoint(data) {
   return request({
-    url: '/collection/dataTypePoint',
+    url: '/system/dataTypePoint',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateDataTypePoint(data) {
 // 删除数据类型点位关联
 export function delDataTypePoint(typeId) {
   return request({
-    url: '/collection/dataTypePoint/' + typeId,
+    url: '/system/dataTypePoint/' + typeId,
     method: 'delete'
   })
 }
@@ -46,7 +46,7 @@ export function delDataTypePoint(typeId) {
 // 查询采集器树形菜单数据
 export function collectorTreeSelect(){
   return request({
-    url: '/collection/dataTypePoint/collectorTree',
+    url: '/system/dataTypePoint/collectorTree',
     method: 'get'
   })
 }
@@ -55,7 +55,7 @@ export function collectorTreeSelect(){
 // 清除数据点关联类型
 export function clearDataTypePoint(pointId) {
   return request({
-    url: '/collection/dataTypePoint/clear/' + pointId,
+    url: '/system/dataTypePoint/clear/' + pointId,
     method: 'delete'
   })
 }

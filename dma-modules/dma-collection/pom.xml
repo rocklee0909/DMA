@@ -92,6 +92,12 @@
         </dependency>
 
         <dependency>
+            <groupId>cn.monitoring</groupId>
+            <artifactId>dma-common-data</artifactId>
+            <version>3.6.5</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>

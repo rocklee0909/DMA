@@ -18,6 +18,11 @@ public class ServiceNameConstants
     public static final String SYSTEM_SERVICE = "dma-system";
 
     /**
+     * 采集模块的serviceid
+     */
+    public static final String COLLECTION_SERVICE = "dma-collection";
+
+    /**
      * 文件服务的serviceid
      */
     public static final String FILE_SERVICE = "dma-file";

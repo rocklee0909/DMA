@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询数据点位配置列表
 export function listDataPoint(query) {
   return request({
-    url: '/collection/dataPoint/list',
+    url: '/system/dataPoint/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listDataPoint(query) {
 // 查询数据点位配置详细
 export function getDataPoint(pointId) {
   return request({
-    url: '/collection/dataPoint/' + pointId,
+    url: '/system/dataPoint/' + pointId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getDataPoint(pointId) {
 // 新增数据点位配置
 export function addDataPoint(data) {
   return request({
-    url: '/collection/dataPoint',
+    url: '/system/dataPoint',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addDataPoint(data) {
 // 修改数据点位配置
 export function updateDataPoint(data) {
   return request({
-    url: '/collection/dataPoint',
+    url: '/system/dataPoint',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateDataPoint(data) {
 // 修改数据点位配置
 export function moveDataPoint(data) {
   return request({
-    url: '/collection/dataPoint/move',
+    url: '/system/dataPoint/move',
     method: 'put',
     data: data
   })
@@ -47,14 +47,14 @@ export function moveDataPoint(data) {
 // 删除数据点位配置
 export function delDataPoint(pointId) {
   return request({
-    url: '/collection/dataPoint/' + pointId,
+    url: '/system/dataPoint/' + pointId,
     method: 'delete'
   })
 }
 
 export function collectorTreeSelect(){
   return request({
-    url: '/collection/dataPoint/collectorTree',
+    url: '/system/dataPoint/collectorTree',
     method: 'get'
   })
 }

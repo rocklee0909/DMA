@@ -195,6 +195,12 @@
                 <version>${dma.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>cn.monitoring</groupId>
+                <artifactId>dma-common-data</artifactId>
+                <version>${dma.version}</version>
+            </dependency>
+
             <!-- 接口模块 -->
             <dependency>
                 <groupId>cn.monitoring</groupId>
@@ -255,6 +261,12 @@
             <dependency>
                 <groupId>cn.monitoring</groupId>
                 <artifactId>dma-api-system</artifactId>
+                <version>${dma.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.monitoring</groupId>
+                <artifactId>dma-api-collection</artifactId>
                 <version>${dma.version}</version>
             </dependency>
 

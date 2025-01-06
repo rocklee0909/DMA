@@ -7,12 +7,8 @@ import cn.monitoring.common.core.utils.SpringUtils;
 import cn.monitoring.common.kafka.consumer.IManualBindConsumer;
 import cn.monitoring.common.kafka.utils.KafkaUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.*;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.KafkaFuture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 

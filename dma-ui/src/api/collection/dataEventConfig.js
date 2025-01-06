@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询事件配置列表
 export function listDataEventConfig(query) {
   return request({
-    url: '/collection/dataEventConfig/list',
+    url: '/system/dataEventConfig/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listDataEventConfig(query) {
 // 查询事件配置详细
 export function getDataEventConfig(eventId) {
   return request({
-    url: '/collection/dataEventConfig/' + eventId,
+    url: '/system/dataEventConfig/' + eventId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getDataEventConfig(eventId) {
 // 新增事件配置
 export function addDataEventConfig(data) {
   return request({
-    url: '/collection/dataEventConfig',
+    url: '/system/dataEventConfig',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addDataEventConfig(data) {
 // 修改事件配置
 export function updateDataEventConfig(data) {
   return request({
-    url: '/collection/dataEventConfig',
+    url: '/system/dataEventConfig',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateDataEventConfig(data) {
 // 删除事件配置
 export function delDataEventConfig(eventId) {
   return request({
-    url: '/collection/dataEventConfig/' + eventId,
+    url: '/system/dataEventConfig/' + eventId,
     method: 'delete'
   })
 }

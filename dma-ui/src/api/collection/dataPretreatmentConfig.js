@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询预处理规则配置列表
 export function listDataPretreatmentConfig(query) {
   return request({
-    url: '/collection/dataPretreatmentConfig/list',
+    url: '/system/dataPretreatmentConfig/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listDataPretreatmentConfig(query) {
 // 查询预处理规则配置详细
 export function getDataPretreatmentConfig(pretreatmentId) {
   return request({
-    url: '/collection/dataPretreatmentConfig/' + pretreatmentId,
+    url: '/system/dataPretreatmentConfig/' + pretreatmentId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getDataPretreatmentConfig(pretreatmentId) {
 // 新增预处理规则配置
 export function addDataPretreatmentConfig(data) {
   return request({
-    url: '/collection/dataPretreatmentConfig',
+    url: '/system/dataPretreatmentConfig',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addDataPretreatmentConfig(data) {
 // 修改预处理规则配置
 export function updateDataPretreatmentConfig(data) {
   return request({
-    url: '/collection/dataPretreatmentConfig',
+    url: '/system/dataPretreatmentConfig',
     method: 'put',
     data: data
   })
@@ -38,7 +38,15 @@ export function updateDataPretreatmentConfig(data) {
 // 删除预处理规则配置
 export function delDataPretreatmentConfig(pretreatmentId) {
   return request({
-    url: '/collection/dataPretreatmentConfig/' + pretreatmentId,
+    url: '/system/dataPretreatmentConfig/' + pretreatmentId,
     method: 'delete'
+  })
+}
+
+// 查询工厂模型下拉树结构
+export function modelTreeSelect() {
+  return request({
+    url: '/system/factorymodel/factorymodelTree',
+    method: 'get'
   })
 }
