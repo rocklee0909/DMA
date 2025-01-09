@@ -2,6 +2,10 @@ package cn.monitoring.collection.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import cn.monitoring.collection.domain.DataPoint;
+import cn.monitoring.collection.domain.vo.DataPretreatmentConfigVo;
+import cn.monitoring.collection.service.IDataPointService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +38,9 @@ public class DataPretreatmentConfigController extends BaseController
     @Autowired
     private IDataPretreatmentConfigService dataPretreatmentConfigService;
 
+    @Autowired
+    private IDataPointService dataPointService;
+
     /**
      * 查询预处理规则配置列表
      */
@@ -43,6 +50,15 @@ public class DataPretreatmentConfigController extends BaseController
     {
         startPage();
         List<DataPretreatmentConfig> list = dataPretreatmentConfigService.selectDataPretreatmentConfigList(dataPretreatmentConfig);
+        return getDataTable(list);
+    }
+
+    @RequiresPermissions("collection:dataPretreatmentConfig:list")
+    @GetMapping("/pointlist")
+    public TableDataInfo list(DataPoint dataPoint)
+    {
+        startPage();
+        List<DataPoint> list = dataPointService.selectDataPointList(dataPoint);
         return getDataTable(list);
     }
 
@@ -75,9 +91,9 @@ public class DataPretreatmentConfigController extends BaseController
     @RequiresPermissions("collection:dataPretreatmentConfig:add")
     @Log(title = "预处理规则配置", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody DataPretreatmentConfig dataPretreatmentConfig)
+    public AjaxResult add(@RequestBody DataPretreatmentConfigVo dataPretreatmentConfigVo)
     {
-        return toAjax(dataPretreatmentConfigService.insertDataPretreatmentConfig(dataPretreatmentConfig));
+        return toAjax(dataPretreatmentConfigService.insertDataPretreatmentConfig(dataPretreatmentConfigVo));
     }
 
     /**
@@ -86,9 +102,9 @@ public class DataPretreatmentConfigController extends BaseController
     @RequiresPermissions("collection:dataPretreatmentConfig:edit")
     @Log(title = "预处理规则配置", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody DataPretreatmentConfig dataPretreatmentConfig)
+    public AjaxResult edit(@RequestBody DataPretreatmentConfigVo dataPretreatmentConfigVo)
     {
-        return toAjax(dataPretreatmentConfigService.updateDataPretreatmentConfig(dataPretreatmentConfig));
+        return toAjax(dataPretreatmentConfigService.updateDataPretreatmentConfig(dataPretreatmentConfigVo));
     }
 
     /**

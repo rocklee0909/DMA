@@ -81,11 +81,20 @@
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
         </dependency>
+
+        <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!-- dma-api-job -->
+        <dependency>
+            <groupId>cn.monitoring</groupId>
+            <artifactId>dma-api-job</artifactId>
+        </dependency>
+
 
     </dependencies>
 

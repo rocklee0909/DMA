@@ -2,6 +2,9 @@ package cn.monitoring.collection.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import cn.monitoring.common.core.domain.R;
+import cn.monitoring.system.api.domain.RemoteDataEventConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -89,6 +92,17 @@ public class DataEventConfigController extends BaseController
     public AjaxResult edit(@RequestBody DataEventConfig dataEventConfig)
     {
         return toAjax(dataEventConfigService.updateDataEventConfig(dataEventConfig));
+    }
+
+    /**
+     * 修改事件配置
+     */
+    @Log(title = "事件配置更新", businessType = BusinessType.UPDATE)
+    @PutMapping("/update")
+    public R<RemoteDataEventConfig> update(@RequestBody RemoteDataEventConfig dataEventConfig)
+    {
+        dataEventConfigService.updateDataEventConfig((DataEventConfig) dataEventConfig);
+        return R.ok(dataEventConfig);
     }
 
     /**

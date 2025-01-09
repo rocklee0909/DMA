@@ -2,6 +2,11 @@ package cn.monitoring.job.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import cn.monitoring.common.core.domain.R;
+import cn.monitoring.job.api.domain.SysJob;
+import cn.monitoring.job.api.util.CronUtils;
+import cn.monitoring.job.util.ScheduleUtils;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,10 +28,7 @@ import cn.monitoring.common.log.annotation.Log;
 import cn.monitoring.common.log.enums.BusinessType;
 import cn.monitoring.common.security.annotation.RequiresPermissions;
 import cn.monitoring.common.security.utils.SecurityUtils;
-import cn.monitoring.job.domain.SysJob;
 import cn.monitoring.job.service.ISysJobService;
-import cn.monitoring.job.util.CronUtils;
-import cn.monitoring.job.util.ScheduleUtils;
 
 /**
  * 调度任务信息操作处理
@@ -75,6 +77,17 @@ public class SysJobController extends BaseController
         return success(jobService.selectJobById(jobId));
     }
 
+
+    /**
+     * 获取定时任务详细信息
+     */
+    @GetMapping(value = "/selectSysJobByJobId")
+    public R<SysJob> selectSysJobByJobId(Long jobId)
+    {
+        return R.ok(jobService.selectJobById(jobId));
+    }
+
+
     /**
      * 新增定时任务
      */
@@ -109,6 +122,38 @@ public class SysJobController extends BaseController
         }
         job.setCreateBy(SecurityUtils.getUsername());
         return toAjax(jobService.insertJob(job));
+    }
+
+    @PostMapping("/insertSysJob")
+    public R<SysJob> insertSysJob(@RequestBody SysJob job) throws SchedulerException, TaskException
+    {
+        if (!CronUtils.isValid(job.getCronExpression()))
+        {
+            return R.fail("新增任务'" + job.getJobName() + "'失败，Cron表达式不正确");
+        }
+        else if (StringUtils.containsIgnoreCase(job.getInvokeTarget(), Constants.LOOKUP_RMI))
+        {
+            return R.fail("新增任务'" + job.getJobName() + "'失败，目标字符串不允许'rmi'调用");
+        }
+        else if (StringUtils.containsAnyIgnoreCase(job.getInvokeTarget(), new String[] { Constants.LOOKUP_LDAP, Constants.LOOKUP_LDAPS }))
+        {
+            return R.fail("新增任务'" + job.getJobName() + "'失败，目标字符串不允许'ldap(s)'调用");
+        }
+        else if (StringUtils.containsAnyIgnoreCase(job.getInvokeTarget(), new String[] { Constants.HTTP, Constants.HTTPS }))
+        {
+            return R.fail("新增任务'" + job.getJobName() + "'失败，目标字符串不允许'http(s)'调用");
+        }
+        else if (StringUtils.containsAnyIgnoreCase(job.getInvokeTarget(), Constants.JOB_ERROR_STR))
+        {
+            return R.fail("新增任务'" + job.getJobName() + "'失败，目标字符串存在违规");
+        }
+        else if (!ScheduleUtils.whiteList(job.getInvokeTarget()))
+        {
+            return R.fail("新增任务'" + job.getJobName() + "'失败，目标字符串不在白名单内");
+        }
+        job.setCreateBy(SecurityUtils.getUsername());
+        jobService.insertJob(job);
+        return R.ok(job);
     }
 
     /**
@@ -148,6 +193,42 @@ public class SysJobController extends BaseController
     }
 
     /**
+     * 修改定时任务
+     */
+    @Log(title = "定时任务", businessType = BusinessType.UPDATE)
+    @PutMapping("updateSysJob")
+    public R<SysJob> updateSysJob(@RequestBody SysJob job) throws SchedulerException, TaskException
+    {
+        if (!CronUtils.isValid(job.getCronExpression()))
+        {
+            return R.fail("修改任务'" + job.getJobName() + "'失败，Cron表达式不正确");
+        }
+        else if (StringUtils.containsIgnoreCase(job.getInvokeTarget(), Constants.LOOKUP_RMI))
+        {
+            return R.fail("修改任务'" + job.getJobName() + "'失败，目标字符串不允许'rmi'调用");
+        }
+        else if (StringUtils.containsAnyIgnoreCase(job.getInvokeTarget(), new String[] { Constants.LOOKUP_LDAP, Constants.LOOKUP_LDAPS }))
+        {
+            return R.fail("修改任务'" + job.getJobName() + "'失败，目标字符串不允许'ldap(s)'调用");
+        }
+        else if (StringUtils.containsAnyIgnoreCase(job.getInvokeTarget(), new String[] { Constants.HTTP, Constants.HTTPS }))
+        {
+            return R.fail("修改任务'" + job.getJobName() + "'失败，目标字符串不允许'http(s)'调用");
+        }
+        else if (StringUtils.containsAnyIgnoreCase(job.getInvokeTarget(), Constants.JOB_ERROR_STR))
+        {
+            return R.fail("修改任务'" + job.getJobName() + "'失败，目标字符串存在违规");
+        }
+        else if (!ScheduleUtils.whiteList(job.getInvokeTarget()))
+        {
+            return R.fail("修改任务'" + job.getJobName() + "'失败，目标字符串不在白名单内");
+        }
+        job.setUpdateBy(SecurityUtils.getUsername());
+        jobService.updateJob(job);
+        return R.ok(job);
+    }
+
+    /**
      * 定时任务状态修改
      */
     @RequiresPermissions("monitor:job:changeStatus")
@@ -182,5 +263,16 @@ public class SysJobController extends BaseController
     {
         jobService.deleteJobByIds(jobIds);
         return success();
+    }
+
+    /**
+     * 删除定时任务
+     */
+    @Log(title = "定时任务", businessType = BusinessType.DELETE)
+    @DeleteMapping("/deleteSysJobByJobId")
+    public R<Integer> deleteSysJobByJobId(Long[] jobIds) throws SchedulerException, TaskException
+    {
+        jobService.deleteJobByIds(jobIds);
+        return R.ok();
     }
 }

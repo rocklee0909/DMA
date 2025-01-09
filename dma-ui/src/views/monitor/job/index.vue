@@ -101,7 +101,8 @@
         </template>
       </el-table-column>
       <el-table-column label="调用目标字符串" align="center" prop="invokeTarget" :show-overflow-tooltip="true" />
-      <el-table-column label="cron执行表达式" align="center" prop="cronExpression" :show-overflow-tooltip="true" />
+      <el-table-column label="执行类型" align="center" prop="exeType" :show-overflow-tooltip="true" />
+      <el-table-column label="cron执行表达式/毫秒数" align="center" prop="cronExpression" :show-overflow-tooltip="true" />
       <el-table-column label="状态" align="center">
         <template slot-scope="scope">
           <el-switch
@@ -189,10 +190,28 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="cron表达式" prop="cronExpression">
-              <el-input v-model="form.cronExpression" placeholder="请输入cron执行表达式">
+            <el-form-item prop="exeType">
+              <span slot="label">
+                执行类型
+                <el-tooltip placement="top">
+                  <div slot="content">
+                    cron: 标准 Cron 表达式
+                    <br />millisecond: 毫秒数
+                  </div>
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+              </span>
+              <el-radio-group v-model="form.exeType">
+                <el-radio-button label="cron"></el-radio-button>
+                <el-radio-button label="millisecond"></el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item :label="form.exeType=='cron'?'cron表达式':'毫秒数'" prop="cronExpression">
+              <el-input v-model="form.cronExpression" :placeholder="form.exeType=='cron'?'请输入cron执行表达式':'请输入毫秒数'">
                 <template slot="append">
-                  <el-button type="primary" @click="handleShowCron">
+                  <el-button v-if="form.exeType=='cron'" type="primary" @click="handleShowCron">
                     生成表达式
                     <i class="el-icon-time el-icon--right"></i>
                   </el-button>
@@ -260,6 +279,9 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="调用目标方法：">{{ form.invokeTarget }}</el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="执行类型：">{{ form.exeType }}</el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="任务状态：">
@@ -377,6 +399,7 @@ export default {
         jobName: undefined,
         jobGroup: undefined,
         invokeTarget: undefined,
+        exeType: "cron",
         cronExpression: undefined,
         misfirePolicy: 1,
         concurrent: 1,

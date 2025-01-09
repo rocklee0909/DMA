@@ -1,6 +1,8 @@
 package cn.monitoring.job.util;
 
 import java.util.Date;
+
+import cn.monitoring.job.api.domain.SysJob;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -11,7 +13,6 @@ import cn.monitoring.common.core.utils.ExceptionUtil;
 import cn.monitoring.common.core.utils.SpringUtils;
 import cn.monitoring.common.core.utils.StringUtils;
 import cn.monitoring.common.core.utils.bean.BeanUtils;
-import cn.monitoring.job.domain.SysJob;
 import cn.monitoring.job.domain.SysJobLog;
 import cn.monitoring.job.service.ISysJobLogService;
 

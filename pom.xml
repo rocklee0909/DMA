@@ -195,6 +195,7 @@
                 <version>${dma.version}</version>
             </dependency>
 
+            <!-- 数据模块 -->
             <dependency>
                 <groupId>cn.monitoring</groupId>
                 <artifactId>dma-common-data</artifactId>
@@ -264,9 +265,29 @@
                 <version>${dma.version}</version>
             </dependency>
 
+            <!-- kafka模块 -->
+            <dependency>
+                <groupId>cn.monitoring</groupId>
+                <artifactId>dma-common-kafka</artifactId>
+                <version>${dma.version}</version>
+            </dependency>
+
+            <!-- dma common flink -->
+            <dependency>
+                <groupId>cn.monitoring</groupId>
+                <artifactId>dma-common-flink</artifactId>
+                <version>${dma.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>cn.monitoring</groupId>
                 <artifactId>dma-api-collection</artifactId>
+                <version>${dma.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.monitoring</groupId>
+                <artifactId>dma-api-job</artifactId>
                 <version>${dma.version}</version>
             </dependency>
 

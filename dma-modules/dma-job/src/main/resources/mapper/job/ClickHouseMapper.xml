@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.monitoring.collection.mapper.ClickHouseMapper">
+
+    <!-- 创建表 -->
+    <insert id="createTable">
+        ${createTableSql}
+    </insert>
+
+    <!-- 检查表是否存在 -->
+    <select id="checkTableExists" resultType="Integer">
+        SELECT count(*)
+        FROM system.tables
+        WHERE name = #{tableName}
+    </select>
+
+    <!-- 检查列是否存在 -->
+    <select id="checkColumnExists" resultType="Integer">
+        SELECT count(*)
+        FROM system.columns
+        WHERE table = #{tableName} AND name = #{columnName}
+    </select>
+
+    <!-- 添加列 -->
+    <update id="addColumn">
+        ${addColumnSql}
+    </update>
+
+    <!-- 移除列 -->
+    <update id="removeColumn">
+        ${removeColumnSql}
+    </update>
+
+    <!-- 获取表的所有列名 -->
+    <select id="getColumnNames" resultType="String">
+        SELECT name
+        FROM system.columns
+        WHERE table = #{tableName}
+    </select>
+
+    <!-- 插入数据 -->
+    <insert id="insert">
+        ${insertSql}
+    </insert>
+
+</mapper>

@@ -1,7 +1,14 @@
 package cn.monitoring.collection.service.impl;
 
 import java.util.List;
+
+import cn.monitoring.common.core.exception.job.TaskException;
+import cn.monitoring.common.redis.service.RedisService;
 import cn.monitoring.common.security.utils.SecurityUtils;
+import cn.monitoring.job.api.RemoteSysJobService;
+import cn.monitoring.job.api.domain.SysJob;
+import com.alibaba.fastjson.JSON;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cn.monitoring.common.core.utils.DateUtils;
@@ -21,6 +28,12 @@ public class DataEventConfigServiceImpl implements IDataEventConfigService
     @Autowired
     private DataEventConfigMapper dataEventConfigMapper;
 
+    @Autowired
+    private RemoteSysJobService remoteSysJobService;
+
+    @Autowired
+    private RedisService redisService;
+
     /**
      * 查询事件配置
      * 
@@ -30,7 +43,11 @@ public class DataEventConfigServiceImpl implements IDataEventConfigService
     @Override
     public DataEventConfig selectDataEventConfigByEventId(Long eventId)
     {
-        return dataEventConfigMapper.selectDataEventConfigByEventId(eventId);
+        DataEventConfig dataEventConfig = dataEventConfigMapper.selectDataEventConfigByEventId(eventId);
+        //查询事件执行器
+        SysJob sysJob = remoteSysJobService.selectSysJobByJobId(dataEventConfig.getSysJob().getJobId()).getData();
+        dataEventConfig.setSysJob(sysJob);
+        return dataEventConfig;
     }
 
     /**
@@ -42,7 +59,12 @@ public class DataEventConfigServiceImpl implements IDataEventConfigService
     @Override
     public List<DataEventConfig> selectDataEventConfigList(DataEventConfig dataEventConfig)
     {
-        return dataEventConfigMapper.selectDataEventConfigList(dataEventConfig);
+        List<DataEventConfig> dataEventConfigs = dataEventConfigMapper.selectDataEventConfigList(dataEventConfig);
+        for (DataEventConfig dataEventConfig1 : dataEventConfigs) {
+            SysJob sysJob = remoteSysJobService.selectSysJobByJobId(dataEventConfig1.getSysJob().getJobId()).getData();
+            dataEventConfig1.setSysJob(sysJob);
+        }
+        return dataEventConfigs;
     }
 
     /**
@@ -56,7 +78,23 @@ public class DataEventConfigServiceImpl implements IDataEventConfigService
     {
         dataEventConfig.setCreateBy(SecurityUtils.getUsername());
         dataEventConfig.setCreateTime(DateUtils.getNowDate());
-        return dataEventConfigMapper.insertDataEventConfig(dataEventConfig);
+
+        int result = dataEventConfigMapper.insertDataEventConfig(dataEventConfig);
+
+        SysJob sysJob = dataEventConfig.getSysJob();
+        //构造事件执行器
+        sysJob.setInvokeTarget("eventTask.dataCheck("+dataEventConfig.getEventId()+")");
+        try {
+            remoteSysJobService.insertSysJob(sysJob);
+            //添加事件内容到Redis
+            redisService.setCacheObject("event_"+dataEventConfig.getEventId(), dataEventConfig);
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        } catch (TaskException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result;
     }
 
     /**
@@ -70,7 +108,22 @@ public class DataEventConfigServiceImpl implements IDataEventConfigService
     {
         dataEventConfig.setUpdateBy(SecurityUtils.getUsername());
         dataEventConfig.setUpdateTime(DateUtils.getNowDate());
-        return dataEventConfigMapper.updateDataEventConfig(dataEventConfig);
+        int result = dataEventConfigMapper.updateDataEventConfig(dataEventConfig);
+
+        SysJob sysJob = dataEventConfig.getSysJob();
+        //构造事件执行器
+        sysJob.setInvokeTarget("eventTask.dataCheck("+dataEventConfig.getEventId()+")");
+        try {
+            remoteSysJobService.updateSysJob(sysJob);
+            //添加事件内容到Redis
+            redisService.setCacheObject("event_"+dataEventConfig.getEventId(), dataEventConfig);
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        } catch (TaskException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result;
     }
 
     /**
@@ -82,7 +135,21 @@ public class DataEventConfigServiceImpl implements IDataEventConfigService
     @Override
     public int deleteDataEventConfigByEventIds(Long[] eventIds)
     {
-        return dataEventConfigMapper.deleteDataEventConfigByEventIds(eventIds);
+        for (Long eventId : eventIds) {
+            DataEventConfig dataEventConfig = selectDataEventConfigByEventId(eventId);
+            Long jobId = dataEventConfig.getSysJob().getJobId();
+            try {
+                remoteSysJobService.deleteSysJobByJobId(new Long[]{jobId});
+            } catch (SchedulerException e) {
+                throw new RuntimeException(e);
+            } catch (TaskException e) {
+                throw new RuntimeException(e);
+            }
+            redisService.deleteObject("event_"+jobId);
+        }
+
+        int result = dataEventConfigMapper.deleteDataEventConfigByEventIds(eventIds);
+        return result;
     }
 
     /**
@@ -94,6 +161,17 @@ public class DataEventConfigServiceImpl implements IDataEventConfigService
     @Override
     public int deleteDataEventConfigByEventId(Long eventId)
     {
+        DataEventConfig dataEventConfig = selectDataEventConfigByEventId(eventId);
+        Long jobId = dataEventConfig.getSysJob().getJobId();
+        try {
+            remoteSysJobService.deleteSysJobByJobId(new Long[]{jobId});
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        } catch (TaskException e) {
+            throw new RuntimeException(e);
+        }
+        redisService.deleteObject("event_"+jobId);
+
         return dataEventConfigMapper.deleteDataEventConfigByEventId(eventId);
     }
 }

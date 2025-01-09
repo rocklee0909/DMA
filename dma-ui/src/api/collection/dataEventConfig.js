@@ -46,7 +46,7 @@ export function delDataEventConfig(eventId) {
 // 查询工厂模型下拉树结构
 export function modelTreeSelect() {
   return request({
-    url: '/system/factorymodel/factoryModelTree',
+    url: '/system/factorymodel/factorymodelTree',
     method: 'get'
   })
 }

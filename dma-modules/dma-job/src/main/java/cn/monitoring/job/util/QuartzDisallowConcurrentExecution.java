@@ -1,9 +1,9 @@
 package cn.monitoring.job.util;
 
+import cn.monitoring.job.api.domain.SysJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 
-import cn.monitoring.job.domain.SysJob;
 
 /**
  * 定时任务处理（禁止并发执行）

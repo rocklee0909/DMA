@@ -139,28 +139,12 @@
         <el-form-item label="预处理名称" prop="pretreatmentName">
           <el-input v-model="form.pretreatmentName" placeholder="请输入预处理名称" />
         </el-form-item>
-        <el-form-item label="数据点id" prop="pointId">
-          <el-input v-model="form.pointId" placeholder="请输入数据点id" />
-        </el-form-item>
-        <el-form-item label="目标数据点名称" prop="targetDataPointName">
-          <el-input v-model="form.targetDataPointName" placeholder="请输入目标数据点名称" />
-        </el-form-item>
-        <el-form-item label="目标数据点编码" prop="targetDataPointCode">
-          <el-input v-model="form.targetDataPointCode" placeholder="请输入目标数据点编码" />
+        <el-form-item label="预处理数据点" prop="pointIds">
+          <treeselect v-model="form.pointIds" :options="dataPointList" :multiple="true" :show-count="true" :flatten-search-results="true" :normalizer="pointNormalizer" placeholder="请选择预处理数据点" />
+          <!-- <el-input v-model="form.pointId" placeholder="请输入数据点id" /> -->
         </el-form-item>
         <el-form-item label="预处理方法" prop="pretreatmentMethod">
           <el-input v-model="form.pretreatmentMethod" placeholder="请输入预处理方法" />
-        </el-form-item>
-        <el-form-item label="最新处理时间" prop="handleTime">
-          <el-date-picker clearable
-            v-model="form.handleTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择最新处理时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="删除标志" prop="delFlag">
-          <el-input v-model="form.delFlag" placeholder="请输入删除标志" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -172,7 +156,7 @@
 </template>
 
 <script>
-import { listDataPretreatmentConfig, getDataPretreatmentConfig, delDataPretreatmentConfig, addDataPretreatmentConfig, updateDataPretreatmentConfig, modelTreeSelect } from "@/api/collection/dataPretreatmentConfig";
+import { listDataPretreatmentConfig, getDataPretreatmentConfig, delDataPretreatmentConfig, addDataPretreatmentConfig, updateDataPretreatmentConfig, modelTreeSelect, listDataPoint } from "@/api/collection/dataPretreatmentConfig";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { Splitpanes, Pane } from "splitpanes";
@@ -197,12 +181,16 @@ export default {
       total: 0,
       // 预处理规则配置表格数据
       dataPretreatmentConfigList: [],
+      // 数据点位配置表格数据
+      dataPointList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
       // 工厂模型树选项
       modelOptions: undefined,
+      // 数据点选项模型
+      pointOptions: undefined,
       defaultProps: {
         children: "children",
         label: "label"
@@ -227,6 +215,7 @@ export default {
   },
   created() {
     this.getList();
+    this.pointGetList();
     this.getFactoryModelTree();
   },
   methods: {
@@ -239,6 +228,7 @@ export default {
         this.loading = false;
       });
     },
+
     // 取消按钮
     cancel() {
       this.open = false;
@@ -337,6 +327,26 @@ export default {
         this.modelOptions = response.data;
       });
     },
+    pointGetList(){
+      let queryParams = {
+        pageNum: 1,
+        pageSize: 10000,
+        factoryModelId: null
+      }
+
+      listDataPoint(queryParams).then(response => {
+        this.dataPointList = response.rows;
+      });
+    },
+    pointNormalizer(node) {
+      return {
+        id: node.pointId,
+        label: node.pointName + '('+node.pointCode+')',
+        value: node.pointCode,
+        children: node.subOptions,
+        ...node
+      }
+    }
   }
 };
 </script>

@@ -1,8 +1,8 @@
 package cn.monitoring.job.util;
 
+import cn.monitoring.job.api.domain.SysJob;
 import org.quartz.JobExecutionContext;
 
-import cn.monitoring.job.domain.SysJob;
 
 /**
  * 定时任务处理（允许并发执行）

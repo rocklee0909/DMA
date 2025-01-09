@@ -11,6 +11,7 @@
     <modules>
         <module>dma-api-system</module>
         <module>dma-api-collection</module>
+        <module>dma-api-job</module>
     </modules>
 
     <artifactId>dma-api</artifactId>

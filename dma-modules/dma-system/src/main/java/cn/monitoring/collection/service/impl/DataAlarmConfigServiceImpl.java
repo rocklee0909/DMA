@@ -1,7 +1,14 @@
 package cn.monitoring.collection.service.impl;
 
 import java.util.List;
+
+import cn.monitoring.common.core.exception.job.TaskException;
+import cn.monitoring.common.redis.service.RedisService;
 import cn.monitoring.common.security.utils.SecurityUtils;
+import cn.monitoring.job.api.RemoteSysJobService;
+import cn.monitoring.job.api.domain.SysJob;
+import com.alibaba.fastjson.JSON;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cn.monitoring.common.core.utils.DateUtils;
@@ -21,6 +28,12 @@ public class DataAlarmConfigServiceImpl implements IDataAlarmConfigService
     @Autowired
     private DataAlarmConfigMapper dataAlarmConfigMapper;
 
+    @Autowired
+    private RemoteSysJobService remoteSysJobService;
+
+    @Autowired
+    private RedisService redisService;
+
     /**
      * 查询告警配置
      * 
@@ -30,7 +43,11 @@ public class DataAlarmConfigServiceImpl implements IDataAlarmConfigService
     @Override
     public DataAlarmConfig selectDataAlarmConfigByAlertId(Long alertId)
     {
-        return dataAlarmConfigMapper.selectDataAlarmConfigByAlertId(alertId);
+        DataAlarmConfig dataAlarmConfig = dataAlarmConfigMapper.selectDataAlarmConfigByAlertId(alertId);
+        //查询告警执行器
+        SysJob sysJob = remoteSysJobService.selectSysJobByJobId(dataAlarmConfig.getSysJob().getJobId()).getData();
+        dataAlarmConfig.setSysJob(sysJob);
+        return dataAlarmConfig;
     }
 
     /**
@@ -42,7 +59,12 @@ public class DataAlarmConfigServiceImpl implements IDataAlarmConfigService
     @Override
     public List<DataAlarmConfig> selectDataAlarmConfigList(DataAlarmConfig dataAlarmConfig)
     {
-        return dataAlarmConfigMapper.selectDataAlarmConfigList(dataAlarmConfig);
+        List<DataAlarmConfig> dataAlarmConfigs = dataAlarmConfigMapper.selectDataAlarmConfigList(dataAlarmConfig);
+        for (DataAlarmConfig dataAlarmConfig1 : dataAlarmConfigs) {
+            SysJob sysJob = remoteSysJobService.selectSysJobByJobId(dataAlarmConfig1.getSysJob().getJobId()).getData();
+            dataAlarmConfig1.setSysJob(sysJob);
+        }
+        return dataAlarmConfigs;
     }
 
     /**
@@ -56,7 +78,23 @@ public class DataAlarmConfigServiceImpl implements IDataAlarmConfigService
     {
         dataAlarmConfig.setCreateBy(SecurityUtils.getUsername());
         dataAlarmConfig.setCreateTime(DateUtils.getNowDate());
-        return dataAlarmConfigMapper.insertDataAlarmConfig(dataAlarmConfig);
+
+        int result = dataAlarmConfigMapper.insertDataAlarmConfig(dataAlarmConfig);
+
+        SysJob sysJob = dataAlarmConfig.getSysJob();
+        //构造告警执行器
+        sysJob.setInvokeTarget("alarmTask.dataCheck("+dataAlarmConfig.getAlertId()+")");
+        try {
+            remoteSysJobService.insertSysJob(sysJob);
+            //添加告警内容到Redis
+            redisService.setCacheObject("alarm_"+dataAlarmConfig.getAlertId(), dataAlarmConfig);
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        } catch (TaskException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result;
     }
 
     /**
@@ -70,7 +108,22 @@ public class DataAlarmConfigServiceImpl implements IDataAlarmConfigService
     {
         dataAlarmConfig.setUpdateBy(SecurityUtils.getUsername());
         dataAlarmConfig.setUpdateTime(DateUtils.getNowDate());
-        return dataAlarmConfigMapper.updateDataAlarmConfig(dataAlarmConfig);
+        int result = dataAlarmConfigMapper.updateDataAlarmConfig(dataAlarmConfig);
+
+        SysJob sysJob = dataAlarmConfig.getSysJob();
+        //构造告警执行器
+        sysJob.setInvokeTarget("alarmTask.dataCheck("+dataAlarmConfig.getAlertId()+")");
+        try {
+            remoteSysJobService.updateSysJob(sysJob);
+            //添加告警内容到Redis
+            redisService.setCacheObject("alarm_"+dataAlarmConfig.getAlertId(), dataAlarmConfig);
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        } catch (TaskException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result;
     }
 
     /**
@@ -82,7 +135,21 @@ public class DataAlarmConfigServiceImpl implements IDataAlarmConfigService
     @Override
     public int deleteDataAlarmConfigByAlertIds(Long[] alertIds)
     {
-        return dataAlarmConfigMapper.deleteDataAlarmConfigByAlertIds(alertIds);
+        for (Long alarmId : alertIds) {
+            DataAlarmConfig dataAlarmConfig = selectDataAlarmConfigByAlertId(alarmId);
+            Long jobId = dataAlarmConfig.getSysJob().getJobId();
+            try {
+                remoteSysJobService.deleteSysJobByJobId(new Long[]{jobId});
+            } catch (SchedulerException e) {
+                throw new RuntimeException(e);
+            } catch (TaskException e) {
+                throw new RuntimeException(e);
+            }
+            redisService.deleteObject("event_"+jobId);
+        }
+
+        int result = dataAlarmConfigMapper.deleteDataAlarmConfigByAlertIds(alertIds);
+        return result;
     }
 
     /**
@@ -94,6 +161,17 @@ public class DataAlarmConfigServiceImpl implements IDataAlarmConfigService
     @Override
     public int deleteDataAlarmConfigByAlertId(Long alertId)
     {
+        DataAlarmConfig dataAlarmConfig = selectDataAlarmConfigByAlertId(alertId);
+        Long jobId = dataAlarmConfig.getSysJob().getJobId();
+        try {
+            remoteSysJobService.deleteSysJobByJobId(new Long[]{jobId});
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        } catch (TaskException e) {
+            throw new RuntimeException(e);
+        }
+        redisService.deleteObject("event_"+jobId);
+
         return dataAlarmConfigMapper.deleteDataAlarmConfigByAlertId(alertId);
     }
 }

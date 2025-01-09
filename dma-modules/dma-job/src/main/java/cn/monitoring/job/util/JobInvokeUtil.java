@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import cn.monitoring.common.core.utils.SpringUtils;
 import cn.monitoring.common.core.utils.StringUtils;
-import cn.monitoring.job.domain.SysJob;
+import cn.monitoring.job.api.domain.SysJob;
 
 /**
  * 任务执行工具

@@ -34,25 +34,18 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>cn.monitoring</groupId>
+            <artifactId>dma-api-job</artifactId>
+        </dependency>
         
         <!-- SpringBoot Actuator -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        
-        <!-- Quartz -->
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.mchange</groupId>
-                    <artifactId>c3p0</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        
+
         <!-- Mysql Connector -->
         <dependency>
             <groupId>com.mysql</groupId>
@@ -70,7 +63,25 @@
             <groupId>cn.monitoring</groupId>
             <artifactId>dma-common-swagger</artifactId>
         </dependency>
-        
+
+        <!-- dma Common Data -->
+        <dependency>
+            <groupId>cn.monitoring</groupId>
+            <artifactId>dma-common-data</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--clickhouse依赖-->
+        <dependency>
+            <groupId>ru.yandex.clickhouse</groupId>
+            <artifactId>clickhouse-jdbc</artifactId>
+        </dependency>
+
+
     </dependencies>
 
     <build>

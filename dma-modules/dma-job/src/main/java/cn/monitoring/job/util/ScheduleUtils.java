@@ -1,5 +1,7 @@
 package cn.monitoring.job.util;
 
+import cn.monitoring.job.api.domain.SysJob;
+import cn.monitoring.job.api.util.CronUtils;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
@@ -16,11 +18,10 @@ import cn.monitoring.common.core.exception.job.TaskException;
 import cn.monitoring.common.core.exception.job.TaskException.Code;
 import cn.monitoring.common.core.utils.SpringUtils;
 import cn.monitoring.common.core.utils.StringUtils;
-import cn.monitoring.job.domain.SysJob;
 
 /**
  * 定时任务工具类
- * 
+ *
  * @author liru
  *
  */
@@ -121,7 +122,7 @@ public class ScheduleUtils
 
     /**
      * 检查包名是否为白名单配置
-     * 
+     *
      * @param invokeTarget 目标字符串
      * @return 结果
      */

@@ -26,4 +26,9 @@ public class ServiceNameConstants
      * 文件服务的serviceid
      */
     public static final String FILE_SERVICE = "dma-file";
+
+    /**
+     * 定时任务的serviceid
+     */
+    public static final String JOB_SERVICE = "dma-job";
 }

@@ -1,7 +1,10 @@
 package cn.monitoring.collection.service.impl;
 
 import java.util.List;
+
+import cn.monitoring.collection.domain.vo.DataPretreatmentConfigVo;
 import cn.monitoring.common.security.utils.SecurityUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cn.monitoring.common.core.utils.DateUtils;
@@ -48,29 +51,43 @@ public class DataPretreatmentConfigServiceImpl implements IDataPretreatmentConfi
     /**
      * 新增预处理规则配置
      * 
-     * @param dataPretreatmentConfig 预处理规则配置
+     * @param dataPretreatmentConfigVo 预处理规则配置Vo
      * @return 结果
      */
     @Override
-    public int insertDataPretreatmentConfig(DataPretreatmentConfig dataPretreatmentConfig)
+    public int insertDataPretreatmentConfig(DataPretreatmentConfigVo dataPretreatmentConfigVo)
     {
-        dataPretreatmentConfig.setCreateBy(SecurityUtils.getUsername());
-        dataPretreatmentConfig.setCreateTime(DateUtils.getNowDate());
-        return dataPretreatmentConfigMapper.insertDataPretreatmentConfig(dataPretreatmentConfig);
+        int resultCount = 0;
+        for (Long pointId : dataPretreatmentConfigVo.getPointIds()) {
+            DataPretreatmentConfig dataPretreatmentConfig = new DataPretreatmentConfig();
+            BeanUtils.copyProperties(dataPretreatmentConfigVo, dataPretreatmentConfig);
+            dataPretreatmentConfig.setPointId(pointId);
+            dataPretreatmentConfig.setCreateBy(SecurityUtils.getUsername());
+            dataPretreatmentConfig.setCreateTime(DateUtils.getNowDate());
+            resultCount+=dataPretreatmentConfigMapper.insertDataPretreatmentConfig(dataPretreatmentConfig);
+        }
+        return resultCount;
     }
 
     /**
      * 修改预处理规则配置
      * 
-     * @param dataPretreatmentConfig 预处理规则配置
+     * @param dataPretreatmentConfigVo 预处理规则配置
      * @return 结果
      */
     @Override
-    public int updateDataPretreatmentConfig(DataPretreatmentConfig dataPretreatmentConfig)
+    public int updateDataPretreatmentConfig(DataPretreatmentConfigVo dataPretreatmentConfigVo)
     {
-        dataPretreatmentConfig.setUpdateBy(SecurityUtils.getUsername());
-        dataPretreatmentConfig.setUpdateTime(DateUtils.getNowDate());
-        return dataPretreatmentConfigMapper.updateDataPretreatmentConfig(dataPretreatmentConfig);
+        int resultCount = 0;
+        for (Long pointId : dataPretreatmentConfigVo.getPointIds()) {
+            DataPretreatmentConfig dataPretreatmentConfig = new DataPretreatmentConfig();
+            BeanUtils.copyProperties(dataPretreatmentConfigVo, dataPretreatmentConfig);
+            dataPretreatmentConfig.setPointId(pointId);
+            dataPretreatmentConfig.setCreateBy(SecurityUtils.getUsername());
+            dataPretreatmentConfig.setCreateTime(DateUtils.getNowDate());
+            resultCount+=dataPretreatmentConfigMapper.updateDataPretreatmentConfig(dataPretreatmentConfig);
+        }
+        return resultCount;
     }
 
     /**

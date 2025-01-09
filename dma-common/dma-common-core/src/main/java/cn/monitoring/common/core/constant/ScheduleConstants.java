@@ -24,6 +24,12 @@ public class ScheduleConstants
     /** 不触发立即执行 */
     public static final String MISFIRE_DO_NOTHING = "3";
 
+    /** 执行类型CRON **/
+    public static final String EXPTYPE_CRON = "cron";
+
+    /** 执行类型毫秒值 **/
+    public static final String EXPTYPE_MILLISECOND = "millisecond";
+
     public enum Status
     {
         /**

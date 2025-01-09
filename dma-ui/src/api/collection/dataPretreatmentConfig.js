@@ -50,3 +50,12 @@ export function modelTreeSelect() {
     method: 'get'
   })
 }
+
+// 查询数据点位配置列表
+export function listDataPoint(query) {
+  return request({
+    url: '/system/dataPretreatmentConfig/pointlist',
+    method: 'get',
+    params: query
+  })
+}

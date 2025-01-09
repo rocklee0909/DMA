@@ -1,7 +1,8 @@
 package cn.monitoring.job.mapper;
 
+import cn.monitoring.job.api.domain.SysJob;
+
 import java.util.List;
-import cn.monitoring.job.domain.SysJob;
 
 /**
  * 调度任务信息 数据层

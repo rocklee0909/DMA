@@ -2,6 +2,7 @@ package cn.monitoring.collection.service;
 
 import java.util.List;
 import cn.monitoring.collection.domain.DataPretreatmentConfig;
+import cn.monitoring.collection.domain.vo.DataPretreatmentConfigVo;
 
 /**
  * 预处理规则配置Service接口
@@ -30,18 +31,18 @@ public interface IDataPretreatmentConfigService
     /**
      * 新增预处理规则配置
      * 
-     * @param dataPretreatmentConfig 预处理规则配置
+     * @param dataPretreatmentConfigVo 预处理规则配置Vo
      * @return 结果
      */
-    public int insertDataPretreatmentConfig(DataPretreatmentConfig dataPretreatmentConfig);
+    public int insertDataPretreatmentConfig(DataPretreatmentConfigVo dataPretreatmentConfigVo);
 
     /**
      * 修改预处理规则配置
      * 
-     * @param dataPretreatmentConfig 预处理规则配置
+     * @param dataPretreatmentConfigVo 预处理规则配置
      * @return 结果
      */
-    public int updateDataPretreatmentConfig(DataPretreatmentConfig dataPretreatmentConfig);
+    public int updateDataPretreatmentConfig(DataPretreatmentConfigVo dataPretreatmentConfigVo);
 
     /**
      * 批量删除预处理规则配置
